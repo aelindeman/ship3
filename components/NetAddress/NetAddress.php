@@ -36,7 +36,7 @@ class NetAddress extends Component implements Cacheable
 				}
 			} catch (\Exception $e) {
 				// problem connecting
-				app('cache')->put(static::IPv4_CACHE_KEY, false, $expires);
+				app('cache')->put(static::IPv4_CACHE_KEY, null, $expires);
 				app('log')->info('NetAddress: could not fetch IPv4 address: '.$e->getMessage());
 			}
 		}
@@ -54,7 +54,7 @@ class NetAddress extends Component implements Cacheable
 				}
 			} catch (\Exception $e) {
 				// problem connecting
-				app('cache')->put(static::IPv6_CACHE_KEY, false, $expires);
+				app('cache')->put(static::IPv6_CACHE_KEY, null, $expires);
 				app('log')->info('NetAddress: could not fetch IPv6 address: '.$e->getMessage());
 			}
 		}
