@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Components;
+use App\Behaviors\Cacheable;
 use App\Helpers\ExecutableHelper;
 use App\Models\Component;
 
@@ -8,15 +9,26 @@ use AdamBrett\ShellWrapper\Command\Builder;
 use AdamBrett\ShellWrapper\Runners\Exec;
 use AdamBrett\ShellWrapper\ExitCodes;
 
-class Aptitude extends Component
+class Aptitude extends Component implements Cacheable
 {
-	/*
-	 * Component does not save data to the database
-	 */
+	const APTITUDE_CACHE_KEY = 'components.Aptitude.data';
+
 	protected $table = false;
+
+	public static function flush()
+	{
+		app('cache')->forget(static::APTITUDE_CACHE_KEY);
+		return app('cache')->flush();
+	}
 
 	public static function fetch()
 	{
+		// use cache if it's there
+		$expires = config('Aptitude::config.cache', 1440);
+		if (app('cache')->has(static::APTITUDE_CACHE_KEY)) {
+			return app('cache')->get(static::APTITUDE_CACHE_KEY);
+		}
+
 		// use specified path to apcaccess, or caluclate it from path
 		$bin = ExecutableHelper::getExecutablePath(
 			config('components.Aptitude.executable', 'apt-get')
@@ -33,7 +45,9 @@ class Aptitude extends Component
 
 		// set data if the command ran successfully, or throw an exception
 		if (($exit = $shell->getReturnValue()) == ExitCodes::SUCCESS) {
-			return $shell->getOutput();
+			$out = $shell->getOutput();
+			app('cache')->put(static::APTITUDE_CACHE_KEY, $out, $expires);
+			return $out;
 		} else {
 			throw new \RuntimeException(ExitCodes::getDescription($exit));
 		}
