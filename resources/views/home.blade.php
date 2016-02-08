@@ -24,21 +24,20 @@
 
 <div class="components">
 	<div class="row">
-@if ($components->count() > 0)
-@foreach ($components as $name => $data)
-	@if (view()->exists($name.'::main'))
-	<section id="ship-{{ strtolower($name) }}-component" class="four columns component {{ strtolower($name) }}-component">
-		<article>
-			<header>
-				<h3>@lang($name.'::component.header')</h3>
-			</header>
-			@include ($name.'::main', $data)
-		</article>
-	</section>
-	@endif
-@endforeach
-	</div>
-@else
+	@if ($components->count() > 0)
+	@foreach ($components as $name => $data)
+		@if (view()->exists($name.'::main'))
+			<section id="ship-{{ strtolower($name) }}-component" class="four columns component {{ strtolower($name) }}-component">
+				<article>
+					<header>
+						<h3>@lang($name.'::component.header')</h3>
+					</header>
+					@include ($name.'::main', $data)
+				</article>
+			</section>
+		@endif
+	@endforeach
+	@else
 	<section id="ship-no-components" class="four columns offset-by-four component">
 		<article>
 			<header>
@@ -47,7 +46,8 @@
 			<p>@lang('ship.errors.no-components.description')</p>
 		</article>
 	</section>
-@endif
+	@endif
+	</div>
 </div>
 
 <footer class="primary-footer row">

@@ -8,12 +8,12 @@
         "php": ">=5.5.9",
         "laravel/lumen-framework": "5.2.*",
         "vlucas/phpdotenv": "~2.2",
-        "oyejorge/less.php": "v1.7.0.10",
         "adambrett/shell-wrapper": "^0.6.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
-        "phpunit/phpunit": "~4.0"
+        "phpunit/phpunit": "~4.0",
+        "raveren/kint": "~1.0"
     },
     "autoload": {
         "psr-4": {
