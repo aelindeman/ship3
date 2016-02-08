@@ -50,7 +50,7 @@ class PutCommand extends Command
 
                 // get component data and put it in the database
                 try {
-                    $data = $class->run();
+                    $data = $class->run(true);
                     app('db')->table($table)->insert($data);
                     app('db')->commit();
                 } catch (\Exception $e) {

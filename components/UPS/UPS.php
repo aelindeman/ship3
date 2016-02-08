@@ -13,10 +13,10 @@ class UPS extends Component
 	protected $table = 'ups';
 	protected $fillable = [
 		'status',
-		'charge',
-		'load',
-		'battvoltage',
-		'linevoltage'
+		'bcharge',
+		'loadpct',
+		'battv',
+		'linev'
 	];
 
 	public static function fetch()

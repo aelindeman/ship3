@@ -25,6 +25,14 @@ abstract class Component extends Model implements Fetchable, Parseable
 	protected $output;
 
 	/*
+	 * Return the class name if directly printed.
+	 */
+	public function __toString()
+	{
+		return get_class($this);
+	}
+
+	/*
 	 * Default constructor tries to run the component, and writes to the log if
 	 *   something went wrong.
 	 */
@@ -46,30 +54,23 @@ abstract class Component extends Model implements Fetchable, Parseable
 		}
 	}
 
-	/*
+	/**
 	 * Fetch data, parse it, cache it, and return it.
+	 * @param $filter boolean Only return columns that have columns in the
+	 *   database. (All will still be set in output regardless.)
+	 * @return array output
 	 */
-	public function run()
+	public function run($filter = false)
 	{
 		if (!$this->output) {
 			$this->output = static::parse(static::fetch());
 		}
-		return $this->output;
-	}
 
-	/*
-	 * Just fetch the output, don't run anything.
-	 */
-	public function getOutput()
-	{
-		return $this->output;
-	}
+		// return only columns with database fields, if requested
+		if ($filter and !empty($this->fillable)) {
+			return array_intersect_key($this->output, array_flip($this->fillable));
+		}
 
-	/*
-	 * Return the class name if directly printed.
-	 */
-	public function __toString()
-	{
-		return get_class($this);
+		return $this->output;
 	}
 }
