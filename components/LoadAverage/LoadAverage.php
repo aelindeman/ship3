@@ -21,9 +21,9 @@ class LoadAverage extends Component
 	{
 		$p = preg_split ('/([\s]+|\/)/', $input);
 		return [
-			'one' => $p[0],
-			'five' => $p[1],
-			'fifteen' => $p[2]
+			'one'     => (float)$p[0],
+			'five'    => (float)$p[1],
+			'fifteen' => (float)$p[2]
 		];
 	}
 }

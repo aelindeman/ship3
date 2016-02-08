@@ -36,10 +36,10 @@ class Memory extends Component
 
 		$used = $m['MemTotal'] - $m['MemAvailable'];
 		return [
-			'free' => $m['MemAvailable'],
-			'used' => $used,
-			'cached' => $m['Cached'],
-			'total' => $m['MemTotal']
+			'free'   => (int)$m['MemAvailable'],
+			'used'   => (int)$used,
+			'cached' => (int)$m['Cached'],
+			'total'  => (int)$m['MemTotal']
 		];
 	}
 }
