@@ -52,7 +52,7 @@ class UPS extends Component
 			if (preg_match('/^(.*?)\s*:\s*(.*?)$/', $row, $matches)) {
 				list(, $key, $value) = $matches;
 				$key = preg_replace('/\s+/', '-', strtolower($key));
-				$out[$key] = strtolower($value);
+				$out[$key] = $value;
 			}
 		}
 		return $out;
