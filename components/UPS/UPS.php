@@ -51,7 +51,7 @@ class UPS extends Component
 		foreach ($input as $row) {
 			if (preg_match('/^(.*?)\s*:\s*(.*?)$/', $row, $matches)) {
 				list(, $key, $value) = $matches;
-				$key = preg_replace('/\s+/', '-', strtolower($key));
+				$key = preg_replace('/\s+/', '_', strtolower($key));
 				$out[$key] = $value;
 			}
 		}
