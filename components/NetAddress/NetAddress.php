@@ -1,11 +1,10 @@
 <?php
 
 namespace App\Components;
+use App\Behaviors\Cacheable;
 use App\Models\Component;
 
-// use Illuminate\Support\Facades\Cache;
-
-class NetAddress extends Component
+class NetAddress extends Component implements Cacheable
 {
 	const IPv4_CACHE_KEY = 'components.NetAddress.IPv4';
 	const IPv6_CACHE_KEY = 'components.NetAddress.IPv6';
