@@ -157,11 +157,6 @@ class ComponentController extends Controller
 	 */
 	protected function registerComponent($class, $path)
 	{
-		// don't reregister classes
-		if ($this->registered->has($class)) {
-			return $this->registered->get($class);
-		}
-
 		$name = self::getComponentName($class);
 
 		// load configuration
