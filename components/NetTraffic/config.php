@@ -8,9 +8,9 @@ return [
 	'enabled' => env('COMPONENT_NETTRAFFIC', true),
 
 	/*
-	 * List of network interfaces to use, as an array,
-	 * as they appear in ifconfig.
+	 * The network interfaces to use as they appear in ifconfig, as a comma-
+	 *   separated list.
 	 */
-	'interfaces' => env('COMPONENT_NETTRAFFIC_INTERFACES', ['eth0'])
+	'interfaces' => env('COMPONENT_NETTRAFFIC_INTERFACES', 'eth0')
 
 ];
