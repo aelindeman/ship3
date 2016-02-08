@@ -39,19 +39,7 @@ abstract class Component extends Model implements Fetchable, Parseable
 	public function __construct()
 	{
 		parent::__construct();
-
-		try {
-			$this->run();
-		} catch (\RuntimeException $e) {
-			// component works, but did not run successfully
-			app('log')->debug('Caught '.get_class($e).' in '.get_class($this).': '.$e->getMessage());
-		} catch (\LogicException $e) {
-			// component was not configured correctly
-			app('log')->notice('Caught '.get_class($e).' in '.get_class($this).': '.$e->getMessage());
-		} catch (\Exception $e) {
-			// anything else
-			app('log')->notice('Caught '.get_class($e).' in '.get_class($this).': '.$e->getMessage());
-		}
+		$this->run();
 	}
 
 	/**
