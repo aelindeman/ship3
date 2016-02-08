@@ -49,13 +49,8 @@ class ComponentController extends Controller
 	public function run()
 	{
 		foreach ($this->listComponents() as $path => $class) {
-			try {
-				$this->registerComponent($class, $path);
-				$this->loadComponent($class, $path);
-			} catch (\Exception $e) {
-				$name = self::getComponentName($class);
-				app('log')->notice('Failed to run '.$name.': '.$e->getMessage());
-			}
+			$this->registerComponent($class, $path);
+			$this->loadComponent($class, $path);
 		}
 		return $this;
 	}
@@ -75,12 +70,8 @@ class ComponentController extends Controller
 		$class = $this->componentNamespace.$name;
 		$path = $this->componentsPath.'/'.$name;
 
-		try {
-			$this->registerComponent($class, $path);
-			$this->loadComponent($class, $path);
-		} catch (\Exception $e) {
-			app('log')->notice('Failed to run '.$name.': '.$e->getMessage());
-		}
+		$this->registerComponent($class, $path);
+		$this->loadComponent($class, $path);
 
 		return $this;
 	}
