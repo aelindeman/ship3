@@ -48,9 +48,9 @@ class Handler extends ExceptionHandler
         if (!config('app.debug') and $e instanceOf HttpException) {
             $status = $e->getStatusCode();
 
-            if (view()->exists("errors.{$status}")) {
+            if (view()->exists('errors.'.$status)) {
                 return response(
-                    view("errors.{$status}", ['exception' => $e]),
+                    view('errors.'.$status, ['exception' => $e]),
                     $status
                 );
             }
