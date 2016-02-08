@@ -56,8 +56,8 @@ abstract class Component extends Model implements Fetchable, Parseable
 
 	/**
 	 * Fetch data, parse it, cache it, and return it.
-	 * @param $filter boolean Only return columns that have columns in the
-	 *   database. (All will still be set in output regardless.)
+	 * @param $filter mixed Return only specified columns. Can be an array of
+	 *   keys, or can be `true` to output only valid database column names.
 	 * @return array output
 	 */
 	public function run($filter = false)
@@ -67,8 +67,10 @@ abstract class Component extends Model implements Fetchable, Parseable
 		}
 
 		// return only columns with database fields, if requested
-		if ($filter and !empty($this->fillable)) {
+		if ($filter === true and !empty($this->fillable)) {
 			return array_intersect_key($this->output, array_flip($this->fillable));
+		} else if ($filter and is_array($filter)) {
+			return array_intersect_key($this->output, array_flip($filter));
 		}
 
 		return $this->output;
