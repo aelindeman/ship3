@@ -21,9 +21,4 @@ return [
 	 */
 	'blocksize' => env('COMPONENT_DISK_BLOCKSIZE', 512),
 
-	'graph' => [
-		'enabled' => true,
-		'type' => 'difference'
-	]
-
 ];
