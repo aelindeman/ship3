@@ -14,4 +14,11 @@ return [
 	 */
 	'cache' => env('COMPONENT_APTITUDE_CACHE', 1440),
 
+	/*
+	 * Fetch package versions too?
+	 * If set to false Aptitude will only return the number of updates
+	 *   available. (This won't really improve performance, unfortunately.)
+	 */
+	'packages' => env('COMPONENT_APTITUDE_PACKAGES', true),
+
 ];

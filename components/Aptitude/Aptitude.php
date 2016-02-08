@@ -61,10 +61,14 @@ class Aptitude extends Component implements Cacheable
 			if ($count === null and
 				preg_match('/^([0-9]+) upg/', $line, $matches)) {
 				$count = (int)$matches[1];
+
 				// return if all we wanted was package count
-				if (!config('Aptitude::config.get-packages', true)) {
-					return [ 'count' => $count ];
+				if (!config('Aptitude::config.packages', true)) {
+					return [
+						'count' => $count
+					];
 				}
+
 				continue;
 			}
 
