@@ -21,13 +21,35 @@ $app->get('/', function() use ($app) {
 // JSON and JSONP endpoint
 $app->get('/json', function() use ($app) {
 	$response = response()->json(app(ComponentController::class)->getData());
+
 	if ($cb = $app->request->input('callback')) {
 		try {
 			$response->setCallback($cb);
 		} catch (\InvalidArgumentException $e) {
-			return response()->json([$e->getMessage()], 400);
+			return response()->json(['error' => $e->getMessage()], 400);
 		}
 	}
+
+	return $response;
+});
+
+// JSON and JSONP for specific components
+$app->get('/json/{component}', function() use ($app) {
+	$object = app(ComponentController::class)->run()->getComponents()->get($component);
+
+	if (!$object) {
+		return response()->json(['error' => 'Component not found'], 404);
+	}
+
+	$response = response()->json($object->run());
+	if ($cb = $app->request->input('callback')) {
+		try {
+			$response->setCallback($cb);
+		} catch (\InvalidArgumentException $e) {
+			return response()->json(['error' => $e->getMessage()], 400);
+		}
+	}
+
 	return $response;
 });
 
