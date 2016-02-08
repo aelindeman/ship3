@@ -28,6 +28,7 @@ class UPS extends Component
 
 		$shell = new Exec();
 		$command = new Builder($bin);
+		$command->addFlag('u'); // strip unit labels
 
 		// specify host, if it's in the config
 		if ($host = config('components.UPS.host')) {
@@ -51,7 +52,7 @@ class UPS extends Component
 			if (preg_match('/^(.*?)\s*:\s*(.*?)$/', $row, $matches)) {
 				list(, $key, $value) = $matches;
 				$key = preg_replace('/\s+/', '-', strtolower($key));
-				$out[$key] = $value;
+				$out[$key] = strtolower($value);
 			}
 		}
 		return $out;
