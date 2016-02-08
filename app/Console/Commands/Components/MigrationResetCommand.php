@@ -27,7 +27,7 @@ class MigrationResetCommand extends Command
      */
     public function fire()
     {
-        $this->call('components:remove');
+        $this->call('components:uninstall');
         $this->call('components:install');
     }
 

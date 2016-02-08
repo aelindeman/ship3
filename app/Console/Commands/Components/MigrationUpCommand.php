@@ -28,7 +28,7 @@ class MigrationUpCommand extends Command
      */
     public function fire()
     {
-        $this->info('Running component migrations...');
+        $this->info('Installing component tables:');
         $components = app(ComponentController::class)->listComponents();
 
         foreach ($components as $path => $namespace) {
