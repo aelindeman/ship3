@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Components;
 use App\Controllers\ComponentController;
 
 use Illuminate\Console\Command;
@@ -12,7 +12,7 @@ class PutCommand extends Command
      *
      * @var string
      */
-    protected $name = 'ship:put';
+    protected $name = 'components:put';
 
     /**
      * The console command description.
@@ -39,8 +39,8 @@ class PutCommand extends Command
      */
     public function fire()
     {
-        $time = ['time' => date('c')];
-        $log = collect($time);
+        $time = date('Y-m-d H:i:s');
+        $this->info('Running '.$this->name.' for '.$time.':');
 
         foreach ($this->components->getComponents() as $name => $class) {
 
@@ -53,14 +53,16 @@ class PutCommand extends Command
                     $data = $class->run(true);
                     app('db')->table($table)->insert($data);
                     app('db')->commit();
+                    $this->line('  - '.$name.': '.json_encode($data));
                 } catch (\Exception $e) {
                     app('db')->rollBack();
-                    $errors[$name] = $e;
                     $this->comment('Put for '.$name.' failed: '.$e->getMessage());
                 }
+            } else {
+                $this->line('  - '.$name.' skipped');
             }
         }
 
-        $this->info('Finished'.(isset($errors) ? ', with errors.' : '.'));
+        $this->info('Done.');
     }
 }

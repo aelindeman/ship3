@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Components;
 use App\Controllers\ComponentController;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class MigrationDownCommand extends Command
 {
@@ -12,7 +14,7 @@ class MigrationDownCommand extends Command
      *
      * @var string
      */
-    protected $name = 'ship:down';
+    protected $name = 'components:uninstall';
 
     /**
      * The console command description.
@@ -28,9 +30,10 @@ class MigrationDownCommand extends Command
      */
     public function fire()
     {
-        if ($this->confirm('Are you sure? This will delete all stored data!')) {
+        if ($this->option('yes') or
+        	$this->confirm('Are you sure? This will delete all stored data!')) {
 
-            $this->info('Running component migrations...');
+            $this->info('Rolling back component tables:');
             $components = app(ComponentController::class)->listComponents();
 
             foreach ($components as $path => $namespace) {
@@ -40,9 +43,9 @@ class MigrationDownCommand extends Command
                     try {
                         include_once($migrationFile);
                         (new $migration)->down();
-                        $this->line('  - Uninstalled '.$migration);
+                        $this->line('  - Rolled back '.$migration);
                     } catch (\Exception $e) {
-                        $this->comment('  - Uninstall failed for '.$migration.':');
+                        $this->comment('  - Rollback failed for '.$migration.':');
                         $this->line('    '.$e->getMessage());
                     }
                 }
@@ -51,6 +54,18 @@ class MigrationDownCommand extends Command
         } else {
             $this->info('Canceled.');
         }
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['yes', 'y', InputOption::VALUE_NONE, 'Delete without asking']
+        ];
     }
 
 }

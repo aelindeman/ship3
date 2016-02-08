@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Console\Commands;
-use App\Controllers\ComponentController;
+namespace App\Console\Commands\Components;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class MigrationResetCommand extends Command
 {
@@ -13,7 +11,7 @@ class MigrationResetCommand extends Command
      *
      * @var string
      */
-    protected $name = 'ship:reset';
+    protected $name = 'components:reset';
 
     /**
      * The console command description.
@@ -29,8 +27,8 @@ class MigrationResetCommand extends Command
      */
     public function fire()
     {
-        $this->call('ship:down');
-        $this->call('ship:up');
+        $this->call('components:remove');
+        $this->call('components:install');
     }
 
 }

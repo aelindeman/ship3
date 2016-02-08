@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Components;
 use App\Controllers\ComponentController;
 
 use Illuminate\Console\Command;
@@ -14,7 +14,7 @@ class PruneCommand extends Command
      *
      * @var string
      */
-    protected $name = 'ship:prune {leave}';
+    protected $name = 'components:prune';
 
     /**
      * The console command description.
@@ -42,8 +42,8 @@ class PruneCommand extends Command
     public function fire()
     {
         $leave = $this->argument('leave');
-        $this->info('Pruning all old records...');
-        $this->info('(Will save the newest '.$leave.' entries.)');
+        $this->info('Will save the newest '.$leave.' entries.');
+        $this->info('Pruning old records:');
 
         foreach ($this->components->getComponents() as $name => $class) {
 
@@ -63,7 +63,7 @@ class PruneCommand extends Command
                 });
             }
         }
-        $this->info('Finished.');
+        $this->info('Done.');
     }
 
     /**

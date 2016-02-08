@@ -13,12 +13,13 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        'App\Console\Commands\Components\MigrationDownCommand',
+        'App\Console\Commands\Components\MigrationResetCommand',
+        'App\Console\Commands\Components\MigrationUpCommand',
+        'App\Console\Commands\Components\PruneCommand',
+        'App\Console\Commands\Components\PutCommand',
         'App\Console\Commands\KeyGenerateCommand',
-        'App\Console\Commands\MigrationUpCommand',
-        'App\Console\Commands\MigrationDownCommand',
-        'App\Console\Commands\MigrationResetCommand',
-        'App\Console\Commands\PruneCommand',
-        'App\Console\Commands\PutCommand',
+        'App\Console\Commands\ShipInstallCommand',
     ];
 
     /**
@@ -29,6 +30,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('ship:put')->everyMinute();
+        $schedule->command('components:put')->everyMinute();
     }
 }

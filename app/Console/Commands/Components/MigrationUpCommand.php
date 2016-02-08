@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Components;
 use App\Controllers\ComponentController;
 
 use Illuminate\Console\Command;
@@ -12,7 +12,7 @@ class MigrationUpCommand extends Command
      *
      * @var string
      */
-    protected $name = 'ship:up';
+    protected $name = 'components:install';
 
     /**
      * The console command description.
