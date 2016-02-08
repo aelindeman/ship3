@@ -160,8 +160,10 @@ class ComponentController extends Controller
 		$name = self::getComponentName($class);
 
 		// load configuration
-		foreach (self::getComponentConfiguration($path) as $key => $value) {
-			app('config')->set("components.${name}.${key}", $value);
+		if ($config = self::getComponentConfiguration($path)) {
+			foreach ($config as $key => $value) {
+				app('config')->set("components.${name}.${key}", $value);
+			}
 		}
 
 		// register translations
