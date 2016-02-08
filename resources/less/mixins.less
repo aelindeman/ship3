@@ -1,0 +1,17 @@
+@import (once) 'vars';
+
+.clearfix() {
+	&:before,
+	&:after {
+		content: ' ';
+		display: table;
+	}
+	&:after {
+		clear: both;
+	}
+}
+
+.selection() {
+	background-color: @color-highlight-background;
+	color: @color-highlight-text;
+}

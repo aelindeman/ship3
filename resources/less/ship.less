@@ -1,0 +1,122 @@
+@import 'grid';
+@import 'mixins';
+@import 'base';
+
+.primary-header {
+	margin-bottom: 1em;
+	width: 100%;
+	h1 {
+		text-align: center;
+		@media (min-width: @breakpoint-sm) {
+			display: table-cell;
+			text-align: left;
+			vertical-align: middle;
+		}
+	}
+	@media (min-width: @breakpoint-sm) {
+		display: table;
+	}
+}
+
+.primary-toolbar {
+	margin-top: 0.5em;
+	text-align: center;
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+	li {
+		display: inline-block;
+		line-height: inherit;
+		margin: 0.25em 0;
+		&:not(:last-of-type) { margin-right: 1em; }
+		@media (min-width: @breakpoint-sm) {
+			&.separator {
+				border-right: 0.0625em solid @gray-text;
+				padding-right: 1em;
+			}
+		}
+	}
+	.input-container {
+		.label-before, .input, .label-after {
+			display: inline-block;
+		}
+		.label-before, .label-after {
+			color: @gray-text;
+			margin: 0 0.25em;
+		}
+		.input {
+			border: none;
+			border-bottom: 0.125em solid @color-primary;
+			background-color: transparent;
+			font: inherit;
+			margin: 0;
+			&:invalid {
+				background-color: fade(@color-alternate, 25%);
+				border-bottom-color: @color-alternate;
+				box-shadow: none;
+			}
+		}
+	}
+	@media (max-width: (@breakpoint-sm - 0.1px)) {
+		label {
+			clip: rect(0,0,0,0);
+			display: block;
+			top: -65535px;
+			position: absolute;
+			text-align: -65535px;
+		}
+	}
+	select {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		background: transparent url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjOTE5NTlhIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNi41OSA4LjU5TDEyIDEzLjE3IDcuNDEgOC41OSA2IDEwbDYgNiA2LTZ6Ii8+DQo8L3N2Zz4NCg==) no-repeat 95% 50%;
+		background-size: 1em;
+		border: none;
+		border-bottom: 0.125em solid #3498db;
+		border-radius: 0;
+		padding: 0.125em 1.25em 0.125em 0.25em;
+	}
+	button {
+		background-color: transparent;
+		border: 0.125rem solid @color-primary;
+		border-radius: 0.25em;
+		box-sizing: border-box;
+		font-size: 0.75em;
+		font-weight: 400;
+		line-height: 1;
+		margin: 0;
+		padding: 0.5em 1em;
+		transition: background-color 0.5s ease, color 0.5s ease;
+		&:hover {
+			background-color: @color-primary;
+			color: @dark-mode-text;
+		}
+	}
+	@media (min-width: @breakpoint-sm) {
+		display: table-cell;
+		margin-top: 0;
+		text-align: right;
+		vertical-align: middle;
+	}
+}
+
+.component {
+	header {
+		border-bottom: 0.125em solid @color-primary;
+		margin-bottom: 0.5em;
+		padding-bottom: 0.5em;
+	}
+}
+
+.primary-footer {
+	color: @gray-text;
+	font-size: 0.75em;
+	margin-top: 2em;
+	text-align: center;
+	p {
+		margin: 0;
+	}
+}
