@@ -95,9 +95,23 @@ class ComponentController extends Controller
 			throw new \RuntimeException('No components registed.');
 		}
 
-		return $this->components->map(function ($component) {
-			return $component->run();
+		$data = $this->components->map(function ($component) {
+			try {
+				return $component->run();
+			} catch (\RuntimeException $e) {
+				// component works, but did not run successfully
+				app('log')->debug('Caught '.get_class($e).' in '.get_class($component).': '.$e->getMessage());
+			} catch (\LogicException $e) {
+				// component was not configured correctly
+				app('log')->notice('Caught '.get_class($e).' in '.get_class($component).': '.$e->getMessage());
+			} catch (\Exception $e) {
+				// anything else
+				app('log')->notice('Caught '.get_class($e).' in '.get_class($component).': '.$e->getMessage());
+			}
+			return null;
 		});
+
+		return $data;
 	}
 
 	/**
@@ -165,8 +179,8 @@ class ComponentController extends Controller
 		$config = self::getComponentConfiguration($path);
 		if ($config) {
 			if (!$config['enabled']) {
-				app('log')->debug($class.' not activated (disabled)');
-				return;
+				app('log')->debug($class.' is disabled');
+				return null;
 			}
 		} else {
 			app('log')->debug($class.' activated inferably (no config)');
@@ -181,8 +195,8 @@ class ComponentController extends Controller
 
 		// if it still doesn't exist, that probably means it's broken
 		if (!class_exists($class)) {
-			app('log')->info($class.' not activated (class name?)');
-			return;
+			app('log')->info('Class for '.$class.' not found (broken?)');
+			return null;
 		}
 
 		// instantiate the class
