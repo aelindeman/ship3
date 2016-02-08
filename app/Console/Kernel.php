@@ -13,13 +13,16 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        'App\Console\Commands\KeyGenerateCommand',
+        'App\Console\Commands\ShipInstallCommand',
         'App\Console\Commands\Components\MigrationDownCommand',
         'App\Console\Commands\Components\MigrationResetCommand',
         'App\Console\Commands\Components\MigrationUpCommand',
         'App\Console\Commands\Components\PruneCommand',
         'App\Console\Commands\Components\PutCommand',
-        'App\Console\Commands\KeyGenerateCommand',
-        'App\Console\Commands\ShipInstallCommand',
+        'App\Console\Commands\Users\UserAddCommand',
+        'App\Console\Commands\Users\UserRemoveCommand',
+        'App\Console\Commands\Users\UserResetKeyCommand'
     ];
 
     /**
