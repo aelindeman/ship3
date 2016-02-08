@@ -20,7 +20,7 @@ $app->get('/', function() use ($app) {
 
 // JSON and JSONP endpoint
 $app->get('/json', function() use ($app) {
-	$response = response()->json(app(ComponentController::class)->getData());
+	$response = response()->json(app(ComponentController::class)->run()->getData());
 
 	if ($cb = $app->request->input('callback')) {
 		try {
@@ -34,7 +34,7 @@ $app->get('/json', function() use ($app) {
 });
 
 // JSON and JSONP for specific components
-$app->get('/json/{component}', function() use ($app) {
+$app->get('/json/{component}', function($component) use ($app) {
 	$object = app(ComponentController::class)->run()->getComponents()->get($component);
 
 	if (!$object) {
