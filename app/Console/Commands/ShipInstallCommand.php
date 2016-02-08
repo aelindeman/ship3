@@ -28,7 +28,7 @@ class ShipInstallCommand extends Command
     public function fire()
     {
         $this->call('key:generate');
+        $this->call('migrate:install');
         $this->call('components:install');
-        $this->call('user:add');
     }
 }
