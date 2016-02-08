@@ -15,12 +15,16 @@ use App\Controllers\ComponentController;
 
 // Home view
 $app->get('/', function() use ($app) {
-	return view('home');
+	return view('home', [
+		'components' => app(ComponentController::class)->run()->getData()
+	]);
 });
 
 // JSON and JSONP endpoint
 $app->get('/json', function() use ($app) {
-	$response = response()->json(app(ComponentController::class)->run()->getData());
+	$response = response()->json(
+		app(ComponentController::class)->run()->getData()
+	);
 
 	if ($cb = $app->request->input('callback')) {
 		try {
@@ -33,15 +37,18 @@ $app->get('/json', function() use ($app) {
 	return $response;
 });
 
-// JSON and JSONP for specific components
+// JSON and JSONP for single components
 $app->get('/json/{component}', function($component) use ($app) {
-	$object = app(ComponentController::class)->run()->getComponents()->get($component);
-
-	if (!$object) {
+	try {
+		$response = response()->json(
+			app(ComponentController::class)->runOne($component)->getData()
+		);
+	} catch (\RuntimeException $e) {
 		return response()->json(['error' => 'Component not found'], 404);
+	} catch (\Exception $e) {
+		return response()->json(['error' => $e->getMessage()], 500);
 	}
 
-	$response = response()->json($object->run());
 	if ($cb = $app->request->input('callback')) {
 		try {
 			$response->setCallback($cb);

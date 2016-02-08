@@ -43,16 +43,45 @@ class ComponentController extends Controller
 	}
 
 	/**
-	 * Activates all enabled components.
-	 * @param $reload boolean Forcibly reload and reregister all components.
+	 * Activate all enabled components.
 	 * @return ComponentController
 	 */
-	public function run($reload = false)
+	public function run()
 	{
 		foreach ($this->listComponents() as $path => $class) {
+			try {
+				$this->registerComponent($class, $path);
+				$this->loadComponent($class, $path);
+			} catch (\Exception $e) {
+				$name = self::getComponentName($class);
+				app('log')->notice('Failed to run '.$name.': '.$e->getMessage());
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * Activate a single component by name.
+	 * @return ComponentController
+	 */
+	public function runOne($name)
+	{
+		// if it's already stored, just return it
+		if ($this->components->has($name)) {
+			return $this->components->pull($name);
+		}
+
+		// initialize it
+		$class = $this->componentNamespace.$name;
+		$path = $this->componentsPath.'/'.$name;
+
+		try {
 			$this->registerComponent($class, $path);
 			$this->loadComponent($class, $path);
+		} catch (\Exception $e) {
+			app('log')->notice('Failed to run '.$name.': '.$e->getMessage());
 		}
+
 		return $this;
 	}
 
@@ -62,8 +91,8 @@ class ComponentController extends Controller
 	 */
 	public function getData()
 	{
-		if (!$this->components or !$this->registered) {
-			throw new \RuntimeException('Components must be activated first');
+		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
+			throw new \RuntimeException('No components registed.');
 		}
 
 		return $this->components->map(function ($component) {
@@ -77,8 +106,8 @@ class ComponentController extends Controller
 	 */
 	public function getComponents()
 	{
-		if (!$this->components or !$this->registered) {
-			throw new \RuntimeException('Components must be activated first');
+		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
+			throw new \RuntimeException('No components registered.');
 		}
 
 		return $this->components;
@@ -126,12 +155,21 @@ class ComponentController extends Controller
 	 */
 	protected function loadComponent($class, $path)
 	{
-		// first load (but don't register) the configuration to make sure the
-		// component is enabled
+		// check that component path exists
+		if (!app('files')->isDirectory($path)) {
+			throw new \RuntimeException($class.' does not exist.');
+		}
+
+		// load config to check if component should be activated
+		// assume yes if config doesn't exist
 		$config = self::getComponentConfiguration($path);
-		if (!$config['enabled']) {
-			app('log')->debug($class.' not activated (disabled)');
-			return;
+		if ($config) {
+			if (!$config['enabled']) {
+				app('log')->debug($class.' not activated (disabled)');
+				return;
+			}
+		} else {
+			app('log')->debug($class.' activated inferably (no config)');
 		}
 
 		$classPath = $path.'/'.basename($path).'.php';
@@ -157,9 +195,14 @@ class ComponentController extends Controller
 	 */
 	protected function registerComponent($class, $path)
 	{
+		// check that component path exists
+		if (!app('files')->isDirectory($path)) {
+			throw new \RuntimeException($class.' does not exist.');
+		}
+
 		$name = self::getComponentName($class);
 
-		// load configuration
+		// register configuration
 		if ($config = self::getComponentConfiguration($path)) {
 			foreach ($config as $key => $value) {
 				app('config')->set("components.${name}.${key}", $value);
@@ -183,14 +226,14 @@ class ComponentController extends Controller
 
 	/**
 	 * Loads, but *does not register*, a component's configuration.
-	 * @return array Component configuration
+	 * @return array|boolean Component configuration, or false if not found
 	 */
 	public static function getComponentConfiguration($path)
 	{
 		$file = $path.'/config.php';
 		return app('files')->exists($file) ?
 			include($file) :
-			[];
+			false;
 	}
 
 	/**

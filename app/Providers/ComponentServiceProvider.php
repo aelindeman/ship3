@@ -18,17 +18,4 @@ class ComponentServiceProvider extends ServiceProvider
 			return new ComponentController();
 		});
 	}
-
-	/**
-	 * Bootstrap the ComponentController into each view.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		view()->share('components', app(ComponentController::class)
-			->run()
-			->getData()
-		);
-	}
 }
