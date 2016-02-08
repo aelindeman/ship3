@@ -29,6 +29,7 @@ class ShipInstallCommand extends Command
     {
         $this->call('key:generate');
         $this->call('migrate:install');
+        $this->call('migrate:refresh');
         $this->call('components:install');
     }
 }

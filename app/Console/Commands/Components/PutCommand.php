@@ -58,8 +58,6 @@ class PutCommand extends Command
                     app('db')->rollBack();
                     $this->comment('Put for '.$name.' failed: '.$e->getMessage());
                 }
-            } else {
-                $this->line('  - '.$name.' skipped');
             }
         }
 
