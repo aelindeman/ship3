@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class KeyGenerateCommand extends Command
 {
