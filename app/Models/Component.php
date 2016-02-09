@@ -5,6 +5,7 @@ use App\Behaviors\Fetchable;
 use App\Behaviors\Parseable;
 
 use Illuminate\Database\Eloquent\Model;
+use ReflectionClass;
 
 abstract class Component extends Model implements Fetchable, Parseable
 {
@@ -42,6 +43,15 @@ abstract class Component extends Model implements Fetchable, Parseable
 		$this->run();
 	}
 
+	/*
+	 * Returns the short name (class name without namespace) of the component.
+	 */
+	public function getShortName()
+	{
+		$segments = explode('\\', get_class($this));
+		return array_pop($segments);
+	}
+
 	/**
 	 * Fetch data, parse it, cache it, and return it.
 	 * @param $filter mixed Return only specified columns. Can be an array of
@@ -52,6 +62,11 @@ abstract class Component extends Model implements Fetchable, Parseable
 	{
 		if (!$this->output) {
 			$this->output = static::parse(static::fetch());
+		}
+
+		$name = $this->getShortName();
+		if (($order = config('components.'.$name.'.order', false)) !== false) {
+			$this->output['order'] = $order;
 		}
 
 		// return only columns with database fields, if requested
