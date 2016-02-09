@@ -16,7 +16,7 @@ if (!function_exists('bytesize')) {
 	{
 		$suffixes =  ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k'];
 		$total = count($suffixes);
-		while ($total-- and $input > pow(1024, 2)) {
+		while ($total-- and $input > 10000) {
 			$input /= 1024;
 		}
 		return round($input, $precision).e($space).$suffixes[$total];
