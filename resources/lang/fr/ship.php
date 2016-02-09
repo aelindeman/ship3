@@ -31,6 +31,13 @@ return [
 		]
 	],
 
+	'units' => [
+		'bytes' => [
+			'abbr' => 'o',
+			'name' => 'octet|octets'
+		]
+	],
+
 	'time' => [
 		'formats' => [
 			'date' => 'M-j',

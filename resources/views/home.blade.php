@@ -23,29 +23,27 @@
 </header>
 
 <div class="components">
-	<div class="row">
+	<div class="grid">
 	@if ($components->count() > 0)
-	@foreach ($components as $name => $data)
-		@if (view()->exists($name.'::main'))
-			<section id="ship-{{ strtolower($name) }}-component" class="four columns component {{ strtolower($name) }}-component">
-				<article>
-					<header>
-						<h3>@lang($name.'::component.header')</h3>
-					</header>
-					@include ($name.'::main', $data)
-				</article>
-			</section>
-		@endif
+	@foreach ($components->sortBy('order') as $name => $data)
+	@if (view()->exists($name.'::main'))
+	<article id="ship-component-{{ strtolower($name) }}" class="component col-1-3">
+		<header class="component-header">
+			<h3>@lang($name.'::component.header')</h3>
+		</header>
+		<section class="component-inner">
+			@include ($name.'::main', $data)
+		</section>
+	</article>
+	@endif
 	@endforeach
 	@else
-	<section id="ship-no-components" class="four columns offset-by-four component">
-		<article>
-			<header>
-				<h2>@lang('ship.errors.no-components.header')</h2>
-			</header>
-			<p>@lang('ship.errors.no-components.description')</p>
-		</article>
-	</section>
+	<article class="component col-1-2 col-offset-1-4">
+		<header>
+			<h2>@lang('ship.errors.no-components.header')</h2>
+		</header>
+		<p>@lang('ship.errors.no-components.description')</p>
+	</article>
 	@endif
 	</div>
 </div>

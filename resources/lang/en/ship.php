@@ -31,6 +31,13 @@ return [
 		]
 	],
 
+	'units' => [
+		'bytes' => [
+			'abbr' => 'B',
+			'name' => 'byte|bytes'
+		]
+	],
+
 	'time' => [
 		'formats' => [
 			'date' => 'M/j',

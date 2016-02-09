@@ -1,6 +1,7 @@
 @import 'grid';
 @import 'mixins';
 @import 'base';
+@import 'components';
 
 .primary-header {
 	margin-bottom: 1em;
@@ -53,8 +54,8 @@
 			font: inherit;
 			margin: 0;
 			&:invalid {
-				background-color: fade(@color-alternate, 25%);
-				border-bottom-color: @color-alternate;
+				background-color: fade(@color-opposite, 25%);
+				border-bottom-color: @color-opposite;
 				box-shadow: none;
 			}
 		}
@@ -75,7 +76,7 @@
 		background: transparent url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjOTE5NTlhIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNi41OSA4LjU5TDEyIDEzLjE3IDcuNDEgOC41OSA2IDEwbDYgNiA2LTZ6Ii8+DQo8L3N2Zz4NCg==) no-repeat 95% 50%;
 		background-size: 1em;
 		border: none;
-		border-bottom: 0.125em solid #3498db;
+		border-bottom: 0.125em solid @color-primary;
 		border-radius: 0;
 		padding: 0.125em 1.25em 0.125em 0.25em;
 	}
@@ -104,10 +105,8 @@
 }
 
 .component {
-	header {
-		border-bottom: 0.125em solid @color-primary;
-		margin-bottom: 0.5em;
-		padding-bottom: 0.5em;
+	.component-inner {
+		padding: 0.5em 2em;
 	}
 }
 

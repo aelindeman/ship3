@@ -1,15 +1,15 @@
 @import (once) 'vars';
 
-html[data-env^="dev"] {
+/*html[data-env^="dev"] {
 	border-top: 0.5em solid @color-alternate;
 	border-image: repeating-linear-gradient(135deg, @color-alternate, @color-alternate 1em, #333 1em, #333 2em) 25 repeat;
 	border-image-slice: 5;
-}
+}*/
 
 body {
 	background-color: @light-mode-background;
 	color: @light-mode-text;
-	font: normal normal 100%/1.25 @font-body;
+	font: normal 400 100%/1.25 @font-body;
 	margin: 0;
 	padding: 1em 0;
 	transition: background-color 0.5s ease, color 0.5s ease;
@@ -29,15 +29,28 @@ a:hover, a:focus {
 }
 
 h1, h2, h3, h4, h5, h6 {
+	font-family: @font-header;
 	font-weight: inherit;
 	margin: 0;
 }
-h1 {}
+h1 {
+}
 h2 {
 	font-size: 1em;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.125em;
+}
+h3 {
+	font-size: 0.875em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.0625em;
+}
+
+var, .units {
+	font: inherit;
+	text-transform: none;
 }
 
 ::selection { .selection(); }

@@ -1,0 +1,92 @@
+@import (once) 'vars.less';
+
+.meter {
+	display: block;
+	width: 100%;
+	.meter-header, .meter-footer {
+		text-align: center;
+		font-size: 0.75em;
+		text-transform: lowercase;
+	}
+	.meter-header {
+		font-weight: bold;
+		margin-bottom: 0.5em;
+	}
+	.meter-bar {
+		@size: 1em;
+		.clearfix();
+		background-color: fade(@gray-text, 25%);
+		border-radius: @size;
+		height: @size / 2;
+		margin-bottom: 0.5em;
+		overflow: hidden;
+		width: 100%;
+		.meter-series {
+			float: left;
+			height: 100%;
+			&:first-of-type {
+				border-top-left-radius: @size;
+				border-bottom-left-radius: @size;
+			}
+			&:last-of-type {
+				border-top-right-radius: @size;
+				border-bottom-right-radius: @size;
+			}
+		}
+		.meter-series-label {
+			display: none;
+		}
+	}
+}
+
+.legend {
+	border-collapse: separate;
+	border-spacing: 0 0.25em;
+	display: table;
+	list-style-type: none;
+	margin: 0 auto;
+	padding: 0;
+	text-transform: lowercase;
+	width: 75%;
+	.legend-field {
+		display: table-row;
+		.legend-item, .legend-value {
+			display: table-cell;
+			vertical-align: middle;
+		}
+		.legend-icon {
+			border-radius: 0.125em;
+			border: 0.0625em solid transparent;
+			display: inline-block;
+			height: 0.75em;
+			margin-right: 0.5em;
+			vertical-align: middle;
+			width: 0.75em;
+			&.for-remainder {
+				background-color: fade(@gray-text, 25%) !important;
+				border-color: fade(@gray-text, 50%) !important;
+			}
+		}
+		.legend-item {
+
+		}
+		.legend-value {
+			font-weight: 700;
+			text-align: right;
+		}
+	}
+}
+
+
+.meter .meter-bar .meter-series:nth-of-type(1n),
+.legend .legend-field:nth-of-type(1n) .legend-icon {
+	background-color: fade(@color-primary, 75%);
+}
+.meter .meter-bar .meter-series:nth-of-type(2n),
+.legend .legend-field:nth-of-type(2n) .legend-icon {
+	background-color: fade(@color-secondary, 75%);
+}
+.meter .meter-bar .meter-series:nth-of-type(3n),
+.legend .legend-field:nth-of-type(3n) .legend-icon {
+	background-color: fade(@color-tertiary, 75%);
+}
