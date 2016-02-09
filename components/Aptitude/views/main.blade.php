@@ -1,1 +1,6 @@
-<p>{{ $count or 0 }} @choice('Aptitude::component.update-count', isset($count) ? $count : 0)</p>
+<?php
+
+?>
+<section>
+	<var data-key="Aptitude.count">{{ $count }}</var> @choice('Aptitude::component.packages', $count)
+</section>

@@ -2,5 +2,5 @@
 
 return [
 	'header' => 'Updates',
-	'update-count' => 'update available|updates available'
+	'packages' => 'package|packages'
 ];
