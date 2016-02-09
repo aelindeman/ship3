@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controllers;
+use App\Behaviors\Cacheable;
+use App\Exceptions\ComponentNotFoundException;
 use App\Models\Component;
 
 use Illuminate\Filesystem\Filesystem;
@@ -76,6 +78,28 @@ class ComponentController extends Controller
 		return $this;
 	}
 
+	/*
+	 * Flushes component caches and returns a new ComponentController instane.
+	 */
+	public function flush()
+	{
+		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
+			throw new \RuntimeException('No components registed');
+		}
+
+		$this->components->each(function($component) {
+			if ($component instanceOf Cacheable) {
+				$component::flush();
+			}
+		});
+
+		// reset components to force data reload
+		$this->components = collect();
+		$this->registered = collect();
+
+		return $this;
+	}
+
 	/**
 	 * Returns a collection of the output of all active components.
 	 * @return Collection output
@@ -83,10 +107,10 @@ class ComponentController extends Controller
 	public function getData()
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
-			throw new \RuntimeException('No components registed.');
+			throw new \RuntimeException('No components registed');
 		}
 
-		$data = $this->components->map(function ($component) {
+		$data = $this->components->map(function($component) {
 			try {
 				return $component->run();
 			} catch (\RuntimeException $e) {
@@ -112,7 +136,7 @@ class ComponentController extends Controller
 	public function getComponents()
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
-			throw new \RuntimeException('No components registered.');
+			throw new \RuntimeException('No components registered');
 		}
 
 		return $this->components;
@@ -162,7 +186,7 @@ class ComponentController extends Controller
 	{
 		// check that component path exists
 		if (!app('files')->isDirectory($path)) {
-			throw new \RuntimeException($class.' does not exist.');
+			throw new ComponentNotFoundException('Component not found');
 		}
 
 		// load config to check if component should be activated
@@ -200,12 +224,12 @@ class ComponentController extends Controller
 	 */
 	protected function registerComponent($class, $path)
 	{
+		$name = self::getComponentName($class);
+
 		// check that component path exists
 		if (!app('files')->isDirectory($path)) {
-			throw new \RuntimeException($class.' does not exist.');
+			throw new ComponentNotFoundException('Component not found');
 		}
-
-		$name = self::getComponentName($class);
 
 		// register configuration
 		if ($config = self::getComponentConfiguration($path)) {

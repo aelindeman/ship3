@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\ComponentController;
+use App\Exceptions\ComponentNotFoundException;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +23,17 @@ $app->get('/', function() use ($app) {
 
 // JSON and JSONP endpoint
 $app->get('/json', function() use ($app) {
-	$response = response()->json(
-		app(ComponentController::class)->run()->getData()
-	);
+	try {
+		$cc = app(ComponentController::class)->run();
+
+		if ($app->request->input('cache') == 'no') {
+			$cc->flush()->run();
+		}
+
+		$response = response()->json($cc->getData());
+	} catch (\Exception $e) {
+		return response()->json(['error' => $e->getMessage()], 500);
+	}
 
 	if ($cb = $app->request->input('callback')) {
 		try {
@@ -40,11 +49,15 @@ $app->get('/json', function() use ($app) {
 // JSON and JSONP for single components
 $app->get('/json/{component}', function($component) use ($app) {
 	try {
-		$response = response()->json(
-			app(ComponentController::class)->runOne($component)->getData()
-		);
-	} catch (\RuntimeException $e) {
-		return response()->json(['error' => 'Component not found'], 404);
+		$cc = app(ComponentController::class)->runOne($component);
+
+		if ($app->request->input('cache') == 'no') {
+			$cc->flush()->runOne($component);
+		}
+
+		$response = response()->json($cc->getData());
+	} catch (ComponentNotFoundException $e) {
+		return response()->json(['error' => $e->getMessage()], 404);
 	} catch (\Exception $e) {
 		return response()->json(['error' => $e->getMessage()], 500);
 	}
