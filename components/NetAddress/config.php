@@ -12,7 +12,7 @@ return [
 	 * NetAddress pings icanhazip.com to check the server's external IP, and
 	 *   caches the address as to not spam the server.
 	 */
-	'cache' => env('COMPONENT_NETADDRESS_CACHE', 1440),
+	'cache' => env('COMPONENT_NETADDRESS_CACHE', 360),
 
 	/*
 	 * Check for IPv4 address?
