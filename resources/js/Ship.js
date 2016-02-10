@@ -28,9 +28,10 @@
 	 * Class prototype
 	 */
 	ShipJS.prototype = {
-		graphWidth: els.graphWidth.value,
 		autoreload: els.html.dataset.autoreload == 'on',
 		darkMode: els.html.className.indexOf('dark-mode') > -1,
+		graphWidth: els.graphWidth.value,
+		masonry: null,
 
 		/*
 		 * Initializes functions that need to be called on load.
@@ -38,6 +39,12 @@
 		init: function()
 		{
 			this.bind();
+			this.masonry = new Masonry('.components .grid' , {
+				columnWidth: '.box',
+				itemSelector: '.box',
+				percentPosition: true,
+				transitionDuration: 0
+			});
 		},
 
 		/*

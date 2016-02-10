@@ -10,9 +10,9 @@
 				<div class="input-container">
 					<label class="label-before" for="graph-width">@lang('ship.header.toolbar.graph-width')</label>
 					<select id="graph-width" class="input">
-						@foreach ([3, 6, 12, 24, 48] as $h)
+@foreach ([3, 6, 12, 24, 48] as $h)
 						<option value="{{ $h }}"{{ config('app.graph-width') == $h ? ' selected' : '' }}>{{ $h }} @choice('ship.time.hour', $h)</option>
-						@endforeach
+@endforeach
 					</select>
 				</div>
 			</li><li>
@@ -24,27 +24,27 @@
 
 <div class="components">
 	<div class="grid">
-	@if ($components->count() > 0)
-	@foreach ($components->sortBy('order') as $name => $data)
-	@if (view()->exists($name.'::main'))
-	<article id="ship-component-{{ strtolower($name) }}" class="component col-1-3">
+@if ($components->count() > 0)
+@foreach ($components->sortBy('order') as $name => $data)
+@if (view()->exists($name.'::main'))
+	<article id="ship-component-{{ strtolower($name) }}" class="component box">
 		<header class="component-header">
 			<h3>@lang($name.'::component.header')</h3>
 		</header>
 		<section class="component-inner">
-			@include ($name.'::main', $data)
+@include ($name.'::main', $data)
 		</section>
 	</article>
-	@endif
-	@endforeach
-	@else
-	<article class="component col-1-2 col-offset-1-4">
+@endif
+@endforeach
+@else
+	<article class="component box">
 		<header>
 			<h2>@lang('ship.errors.no-components.header')</h2>
 		</header>
 		<p>@lang('ship.errors.no-components.description')</p>
 	</article>
-	@endif
+@endif
 	</div>
 </div>
 
