@@ -22,15 +22,15 @@ $freePct = ($free - $cached) / $total  * 100;
 
 <ul class="legend half">
 	<li class="legend-field">
-		<span class="legend-item"><span class="legend-icon"></span>@lang('Memory::component.labels.used')</span>
+		<span class="legend-title"><span class="legend-icon"></span>@lang('Memory::component.labels.used')</span>
 		<span class="legend-value"><var data-key="Memory.usedPct" data-title-key="Memory.used" title="{{ bytesize($used, 0, '', 'G') }}">{{ round($usedPct) }}</var>%</span>
 	</li>
 	<li class="legend-field">
-		<span class="legend-item"><span class="legend-icon"></span>@lang('Memory::component.labels.cached')</span>
+		<span class="legend-title"><span class="legend-icon"></span>@lang('Memory::component.labels.cached')</span>
 		<span class="legend-value"><var data-key="Memory.cachedPct" data-title-key="Memory.cached" title="{{ bytesize($cached, 0, '', 'G') }}">{{ round($cachedPct) }}</var>%</span>
 	</li>
 	<li class="legend-field">
-		<span class="legend-item"><span class="legend-icon for-remainder"></span>@lang('Memory::component.labels.free')</span>
+		<span class="legend-title"><span class="legend-icon for-remainder"></span>@lang('Memory::component.labels.free')</span>
 		<span class="legend-value"><var data-key="Memory.freePct" data-title-key="Memory.free" title="{{ bytesize($free, 0, '', 'G') }}">{{ round($freePct) }}</var>%</span>
 	</li>
 </ul>
