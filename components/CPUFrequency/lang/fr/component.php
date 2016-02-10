@@ -2,6 +2,7 @@
 
 return [
 
-	'header' => 'Fréquence du processeur'
+	'header' => 'Fréquence du processeur',
+	'average' => 'Moyenne'
 
 ];

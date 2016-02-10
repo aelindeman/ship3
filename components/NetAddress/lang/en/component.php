@@ -9,7 +9,6 @@ return [
 
 	'browser' => 'Yours',
 	'local' => 'Local',
-	'ipv4' => 'Remote (IPv4)',
-	'ipv6' => 'Remote (IPv6)'
+	'remote' => 'Remote'
 
 ];
