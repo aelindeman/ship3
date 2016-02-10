@@ -12,14 +12,14 @@ if (!function_exists('bytesize')) {
 	 * @param $maxiumum string Maximum
 	 * @return string Formatted size with suffix
 	 */
-	function bytesize($input, $precision = 0, $space = false)
+	function bytesize($input, $precision = 1, $space = false)
 	{
-		$suffixes =  ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k'];
-		$total = count($suffixes);
-		while ($total-- and $input > 10000) {
+		$suffix =  ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k'];
+		$total = count($suffix);
+		while ($total -- and $input > 1024) {
 			$input /= 1024;
 		}
-		return round($input, $precision).e($space).$suffixes[$total];
+		return sprintf('%0.'.$precision.'f', $input).e($space).$suffix[$total];
 	}
 
 }
