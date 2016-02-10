@@ -3,7 +3,7 @@
 namespace App\Components;
 use App\Models\Component;
 
-class Disk extends Component
+class DiskActivity extends Component
 {
 	protected $table = 'disk';
 	protected $fillable = [
@@ -19,15 +19,15 @@ class Disk extends Component
 	public static function parse($input = null)
 	{
 		// get disks
-		$disks = explode(',', config('components.Disk.disks', null));
+		$disks = explode(',', config('components.DiskActivity.disks', null));
 		if (!$disks) {
-			throw new \LogicException(app('translator')->get('Disk::component.errors.no-disks'));
+			throw new \LogicException(app('translator')->get('DiskActivity::component.errors.no-disks'));
 		}
 
 		// get block size
-		$bs = config('components.Disk.blocksize', null);
+		$bs = config('components.DiskActivity.blocksize', null);
 		if (!$bs) {
-			throw new \LogicException(app('translator')->get('Disk::component.errors.blocksize-value'));
+			throw new \LogicException(app('translator')->get('DiskActivity::component.errors.blocksize-value'));
 		}
 
 		if (strpos($bs, ',') > -1) {
@@ -36,7 +36,7 @@ class Disk extends Component
 
 		if (is_array($bs)) {
 			if (count($bs) != count($disks)) {
-				throw new \LogicException(app('translator')->get('Disk::component.errors.blocksize-count'));
+				throw new \LogicException(app('translator')->get('DiskActivity::component.errors.blocksize-count'));
 			}
 		}
 

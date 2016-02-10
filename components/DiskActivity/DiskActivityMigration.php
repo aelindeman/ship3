@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DiskMigration extends Migration
+class DiskActivityMigration extends Migration
 {
     /**
      * Run the migrations.
