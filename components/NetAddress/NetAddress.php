@@ -59,14 +59,20 @@ class NetAddress extends Component implements Cacheable
 			}
 		}
 
-		return [$ipv4, $ipv6];
+		$browser = $_SERVER['REMOTE_ADDR'];
+		$local = isset($_SERVER['SERVER_ADDR']) ?
+			$_SERVER['SERVER_ADDR'] : null;
+
+		return [$browser, $local, $ipv4, $ipv6];
 	}
 
 	public static function parse($input = null)
 	{
-		return [
-			'ipv4' => $input[0],
-			'ipv6' => $input[1]
-		];
+		return array_combine([
+			'browser',
+			'local',
+			'ipv4',
+			'ipv6'
+		], $input);
 	}
 }

@@ -2,5 +2,6 @@
 
 return [
 	'header' => 'Updates',
-	'packages' => 'package|packages'
+	'packages' => 'package|packages',
+	'no-packages' => 'No packages'
 ];

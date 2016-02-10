@@ -1,3 +1,5 @@
+<div class="graph color-scheme-green" data-graph="Memory"></div>
+
 <?php
 $usedPct = $used / $total * 100;
 $cachedPct = $cached / $total * 100;
@@ -18,7 +20,7 @@ $freePct = ($free - $cached) / $total  * 100;
 	</section>
 </div>
 
-<ul class="legend">
+<ul class="legend half">
 	<li class="legend-field">
 		<span class="legend-item"><span class="legend-icon"></span>@lang('Memory::component.labels.used')</span>
 		<span class="legend-value"><var data-key="Memory.usedPct" data-title-key="Memory.used" title="{{ bytesize($used, 0, '', 'G') }}">{{ round($usedPct) }}</var>%</span>

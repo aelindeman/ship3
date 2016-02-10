@@ -3,6 +3,6 @@
 return [
 
 	'header' => 'CPU',
-	'load' => 'Load'
+	'load' => 'Charge moyenne'
 
 ];

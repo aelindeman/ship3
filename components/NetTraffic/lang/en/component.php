@@ -1,5 +1,10 @@
 <?php
 
 return [
-	'header' => 'Network traffic'
+
+	'header' => 'Network traffic',
+
+	'transmit' => 'Send',
+	'recieve' => 'Recieve'
+
 ];

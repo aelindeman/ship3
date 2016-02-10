@@ -8,6 +8,11 @@ return [
 	'enabled' => env('COMPONENT_NETADDRESS', true),
 
 	/*
+	 * Where does this component go on the overview page?
+	 */
+	'order' => env('COMPONENT_NETADDRESS_ORDER', 6),
+
+	/*
 	 * Number of minutes to cache the IP addreses for.
 	 * NetAddress pings icanhazip.com to check the server's external IP, and
 	 *   caches the address as to not spam the server.
