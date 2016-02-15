@@ -59,7 +59,9 @@ class NetAddress extends Component implements Cacheable
 			}
 		}
 
-		$browser = $_SERVER['REMOTE_ADDR'];
+		$browser = isset($_SERVER['REMOTE_ADDR']) ?
+			$_SERVER['REMOTE_ADDR'] : null;
+
 		$local = isset($_SERVER['SERVER_ADDR']) ?
 			$_SERVER['SERVER_ADDR'] : null;
 
