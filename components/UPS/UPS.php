@@ -52,6 +52,7 @@ class UPS extends Component
 			if (preg_match('/^(.*?)\s*:\s*(.*?)$/', $row, $matches)) {
 				list(, $key, $value) = $matches;
 				$key = preg_replace('/\s+/', '_', strtolower($key));
+				if ($key == 'status') $value = strtolower($value);
 				$out[$key] = $value;
 			}
 		}
