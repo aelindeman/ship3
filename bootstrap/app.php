@@ -79,6 +79,7 @@ $app->singleton(
 
 $app->register(App\Providers\ComponentServiceProvider::class);
 $app->register(App\Providers\ShipHelperFunctionProvider::class);
+$app->register(App\Providers\CarbonProvider::class);
 
 /*
 |--------------------------------------------------------------------------
