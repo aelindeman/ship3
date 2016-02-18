@@ -10,7 +10,7 @@ return [
 	/*
 	 * Where does this component go on the overview page?
 	 */
-	'order' => env('COMPONENT_DISKACTIVITY_ORDER', 3),
+	'order' => env('COMPONENT_DISKACTIVITY_ORDER', 4),
 
 	/*
 	 * Disks to monitor, as an array, as their device names in /dev.

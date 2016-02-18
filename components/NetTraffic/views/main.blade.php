@@ -1,13 +1,24 @@
-<div class="graph color-scheme-purple" data-graph="NetTraffic"></div>
-<ul class="legend half color-scheme-purple">
-	<li class="legend-field">
-		<span class="legend-icon"></span>
-		<span class="legend-title">@lang('NetTraffic::component.transmit')</span>
-		<span class="legend-value"><var data-key="NetTraffic.tx">{{ bytesize($tx) }}</var></span>
-	</li>
-	<li class="legend-field">
-		<span class="legend-icon"></span>
-		<span class="legend-title">@lang('NetTraffic::component.recieve')</span>
-		<span class="legend-value"><var data-key="NetTraffic.rx">{{ bytesize($rx) }}</var></span>
-	</li>
-</ul>
+<article id="NetTraffic" class="component">
+	<header>
+		<h2><span>@lang('NetTraffic::component.header')</span></h2>
+	</header>
+	<section>
+
+		<div data-graph="NetTraffic" class="graph"></div>
+
+		<div class="field">
+			<span class="label"><span class="icon series-a"></span>@lang('NetTraffic::component.transmit')</span>
+			<span class="value">
+				<var data-units="kB/s" data-key="NetTraffic.tx">{{ bytesize($tx) }}</var>
+			</span>
+		</div>
+
+		<div class="field">
+			<span class="label"><span class="icon series-b"></span>@lang('NetTraffic::component.recieve')</span>
+			<span class="value">
+				<var data-units="kB/s" data-key="NetTraffic.rx">{{ bytesize($rx) }}</var>
+			</span>
+		</div>
+
+	</section>
+</article>

@@ -1,0 +1,29 @@
+@screen-md: 800px;
+@screen-lg: 1280px;
+
+@transition: 375ms ease;
+
+@font-sans: 'Source Sans Pro',sans-serif;
+@font-mono: 'Source Code Pro',monospace,monospace;
+
+@theme-gray: #91959a;
+@theme-blue: #3498db;
+
+// Mixins
+.clearfix() {
+	&:before, &:after {
+		content: '';
+		display: table;
+	}
+	&:after {
+		clear: both;
+	}
+}
+
+.sr-only() {
+	clip: rect(0,0,0,0);
+	display: block;
+	top: -65535px;
+	position: absolute;
+	text-align: -65535px;
+}

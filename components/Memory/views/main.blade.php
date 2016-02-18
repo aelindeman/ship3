@@ -1,36 +1,19 @@
-<div class="graph color-scheme-green" data-graph="Memory"></div>
-
-<?php
-$usedPct = $used / $total * 100;
-$cachedPct = $cached / $total * 100;
-$freePct = ($free - $cached) / $total  * 100;
-?>
-<div class="meter">
-	<header class="meter-header">
-		<span class="meter-header-text">@lang('Memory::component.labels.total')</span>
-		<var data-key="Memory.total" data-bytes>{{ bytesize($total, 0, '') }}</var><span class="units">@lang('ship.units.bytes.abbr')</span>
+<article id="Memory" class="component">
+	<header>
+		<h2><span>@lang('Memory::component.header')</span></h2>
 	</header>
-	<section class="meter-bar">
-		<div class="meter-series" title="@lang('Memory::component.labels.used')" style="width: {{ $usedPct }}%">
-			<span class="meter-series-label sr-only"><var data-key="Memory.usedPct">{{ $usedPct }}</var>% @lang('Memory::component.labels.used')</span>
-		</div>
-		<div class="meter-series" title="@lang('Memory::component.labels.cached')" style="width: {{ $cachedPct }}%">
-			<span class="meter-series-label sr-only"><var data-key="Memory.cachedPct">{{ $cachedPct }}</var>% @lang('Memory::component.labels.cached')</span>
-		</div>
-	</section>
-</div>
+	<section>
 
-<ul class="legend half">
-	<li class="legend-field">
-		<span class="legend-title"><span class="legend-icon"></span>@lang('Memory::component.labels.used')</span>
-		<span class="legend-value"><var data-key="Memory.usedPct" data-title-key="Memory.used" title="{{ bytesize($used, 0, '', 'G') }}">{{ round($usedPct) }}</var>%</span>
-	</li>
-	<li class="legend-field">
-		<span class="legend-title"><span class="legend-icon"></span>@lang('Memory::component.labels.cached')</span>
-		<span class="legend-value"><var data-key="Memory.cachedPct" data-title-key="Memory.cached" title="{{ bytesize($cached, 0, '', 'G') }}">{{ round($cachedPct) }}</var>%</span>
-	</li>
-	<li class="legend-field">
-		<span class="legend-title"><span class="legend-icon for-remainder"></span>@lang('Memory::component.labels.free')</span>
-		<span class="legend-value"><var data-key="Memory.freePct" data-title-key="Memory.free" title="{{ bytesize($free, 0, '', 'G') }}">{{ round($freePct) }}</var>%</span>
-	</li>
-</ul>
+		<div data-graph="Memory" class="graph"></div>
+
+		<div class="field">
+			<span class="label"><span class="icon series-a"></span>@lang('Memory::component.labels.used')</span>
+			<span class="value">
+				<var data-units="%" data-key="Memory.usedPct">{{ round($used / $total * 100) }}%</var>
+				<span> of </span>
+				<var data-units="kB" data-key="Memory.total">{{ bytesize($total) }}</var>
+			</span>
+		</div>
+
+	</section>
+</article>

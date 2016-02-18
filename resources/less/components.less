@@ -1,116 +1,99 @@
-@import (once) 'vars.less';
+@import (once) 'variables.less';
 
-.meter {
-	display: block;
-	width: 100%;
-	.meter-header, .meter-footer {
-		text-align: center;
-		font-size: 0.75em;
-		text-transform: lowercase;
+// Components grid
+.grid { .clearfix(); }
+.component {
+	&:not(:last-of-type) { margin-bottom: 1em; }
+	@media (min-width: @screen-md) {
+		float: left;
+		padding: 0 1%;
+		width: 48%;
+		&:nth-of-type(2n+1) { clear: both; }
 	}
-	.meter-header {
-		font-weight: bold;
+	@media (min-width: @screen-lg) {
+		width: 31.3333333%;
+		&:nth-of-type(2n+1) { clear: none; }
+		&:nth-of-type(3n+1) { clear: both; }
+	}
+	> header {
 		margin-bottom: 0.5em;
+		h2 {
+			font-size: 1em;
+			font-weight: 600;
+			margin: 0;
+			@media (max-width: (@screen-md - 0.1px)) {
+				overflow: hidden;
+				> span:only-of-type { position: relative; }
+				> span:only-of-type:after {
+					border-bottom: 0.09375em solid fade(@theme-gray, 25%);
+					content: '';
+					left: 100%;
+					margin-left: 0.5em;
+					position: absolute;
+					top: 50%;
+					width: 480px;
+				}
+			}
+		}
 	}
-	.meter-bar {
-		@size: 1em;
+	> section {
+		padding: 0 0 0 0.5em;
+		h3 {
+			font-size: 0.875em;
+			margin: 0.5em 0 0 0;
+		}
+	}
+	.field-list {
+		margin: 0;
+		padding: 0;
+	}
+	.field {
+		display: block;
 		.clearfix();
-		background-color: fade(@gray-text, 25%);
-		border-radius: @size;
-		height: @size / 2;
-		margin-bottom: 0.5em;
-		overflow: hidden;
-		width: 100%;
-		.meter-series {
-			float: left;
-			height: 100%;
-			&:first-of-type {
-				border-top-left-radius: @size;
-				border-bottom-left-radius: @size;
+		&:not(:last-of-type) { margin: 0 0 0.25em 0; }
+		.label {
+			var { font-style: normal; }
+			.icon {
+				background-color: fade(@theme-gray, 25%);
+				border-radius: 0.125rem;
+				display: block;
+				float: left;
+				height: 0.5rem;
+				width: 0.5rem;
+				margin-top: 0.375rem;
+				margin-right: 0.25rem;
+				&.spacer { background-color: transparent; }
 			}
-			&:last-of-type {
-				border-top-right-radius: @size;
-				border-bottom-right-radius: @size;
+			&.mono {
+				font-family: @font-mono;
+				font-size: 0.875em;
+				line-height: inherit;
 			}
 		}
-		.meter-series-label {
-			display: none;
+		.value {
+			float: right;
+			clear: right;
+			font-weight: 600;
+			min-width: 3em;
+			margin-left: 0.5em;
+			text-align: right;
+			&:only-child { float: none; }
+			span { font-weight: 300; }
+			var { font: inherit; }
+			var + var { margin-left: 0.25em; }
+			var.detail {
+				color: @theme-gray;
+				margin-left: 0;
+			}
 		}
-	}
-}
-
-.legend {
-	display: table;
-	list-style-type: none;
-	margin: 0 auto;
-	padding: 0;
-	width: 100%;
-	@media (min-width: @breakpoint-md) {
-		&.half {
+		.meter {
+			float: right;
 			width: 50%;
 		}
-	}
-	.legend-field {
-		display: table-row;
-		.legend-title, .legend-subitem, .legend-value {
-			display: table-cell;
-			vertical-align: middle;
-			white-space: nowrap;
-		}
-		.legend-icon {
-			border-radius: 0.125em;
-			box-sizing: border-box;
-			display: inline-block;
-			height: 0.75em;
-			margin-right: 0.5em;
-			vertical-align: middle;
-			width: 0.75em;
-			&.for-remainder {
-				background-color: fade(@gray-text, 25%) !important;
-			}
-		}
-		.legend-title {
-			min-width: 50%;
-			text-transform: lowercase;
-			.keep-case {
-				text-transform: none;
-			}
-		}
-		.legend-subitem {
-			color: @gray-text;
-			min-width: 12.5%;
-		}
-		.legend-value {
-			font-weight: 700;
-			text-align: right;
-			min-width: 37.5%;
+		&.overview .meter {
+			margin-bottom: 0.25em;
+			margin-top: 0.25em;
+			width: 100%;
 		}
 	}
-	&.mono-values .legend-value {
-		font-family: @font-mono;
-		font-size: 0.75em;
-		line-height: inherit;
-	}
-}
-
-h4 ~ .legend {
-	border-spacing: 0 0.25em;
-	font-size: 0.875em;
-	width: 87.5%;
-}
-.legend + h4 {
-	margin-top: 0.25em;
-}
-
-.meter .meter-bar .meter-series:nth-of-type(1n),
-.legend .legend-field:nth-of-type(1n) .legend-icon {
-	background-color: fade(@color-primary, 75%);
-}
-.meter .meter-bar .meter-series:nth-of-type(2n),
-.legend .legend-field:nth-of-type(2n) .legend-icon {
-	background-color: fade(@color-secondary, 75%);
-}
-.meter .meter-bar .meter-series:nth-of-type(3n),
-.legend .legend-field:nth-of-type(3n) .legend-icon {
-	background-color: fade(@color-tertiary, 75%);
 }

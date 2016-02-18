@@ -4,7 +4,7 @@ return [
 
 	'header' => 'Programmes',
 
-	'cpu' => 'Plus CPU',
-	'memory' => 'Plus mémoire'
+	'cpu' => 'Le plus CPU',
+	'memory' => 'Le plus mémoire'
 
 ];
