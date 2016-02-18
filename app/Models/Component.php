@@ -5,7 +5,6 @@ use App\Behaviors\Fetchable;
 use App\Behaviors\Parseable;
 
 use Illuminate\Database\Eloquent\Model;
-use ReflectionClass;
 
 abstract class Component extends Model implements Fetchable, Parseable
 {

@@ -30,7 +30,11 @@ $app->get('/json', function() use ($app) {
 			$cc->flush()->run();
 		}
 
-		$response = response()->json($cc->getData());
+		// sort by order, then remove the order key
+		$data = $cc->getData()->sortBy('order')->map(function($e) {
+			return collect($e)->except('order');
+		});
+		$response = response()->json($data);
 	} catch (\Exception $e) {
 		return response()->json(['error' => $e->getMessage()], 500);
 	}
@@ -55,7 +59,8 @@ $app->get('/json/{component}', function($component) use ($app) {
 			$cc->flush()->runOne($component);
 		}
 
-		$response = response()->json($cc->getData());
+		$data = collect($cc->getData()->get($component))->except('order');
+		$response = response()->json($data);
 	} catch (ComponentNotFoundException $e) {
 		return response()->json(['error' => $e->getMessage()], 404);
 	} catch (\Exception $e) {

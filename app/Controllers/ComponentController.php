@@ -110,6 +110,7 @@ class ComponentController extends Controller
 			throw new \RuntimeException('No components registed');
 		}
 
+		// get data for each component
 		$data = $this->components->map(function($component) {
 			try {
 				return $component->run();
