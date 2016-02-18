@@ -16,7 +16,7 @@
 				<var data-units="%" data-key="UPS.loadpct">{{ $loadpct }}%</var>
 			</span>
 			<div class="meter">
-				<div class="series" style="width: {{ $loadpct }}%;"></div>
+				<div class="series" data-meter-series-key="UPS.loadpct" style="width: {{ $loadpct }}%;"></div>
 			</div>
 		</div>
 
@@ -26,7 +26,7 @@
 				<var data-units="%" data-key="UPS.bcharge">{{ $bcharge }}%</var>
 			</span>
 			<div class="meter">
-				<div class="series" style="width: {{ $bcharge }}%;"></div>
+				<div class="series" data-meter-series-key="UPS.bcharge" style="width: {{ $bcharge }}%;"></div>
 			</div>
 		</div>
 
