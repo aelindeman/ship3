@@ -3,6 +3,20 @@
 use App\Controllers\ComponentController;
 use App\Exceptions\ComponentNotFoundException;
 
+/**
+ * Quick helper function for adding JSONP/callback support to responses.
+ */
+function addCallbackOrFail(&$response)
+{
+	if ($cb = app('request')->input('callback')) {
+		try {
+			$response->setCallback($cb);
+		} catch (\InvalidArgumentException $e) {
+			$response = response()->json(['error' => $e->getMessage()], 400);
+		}
+	}
+}
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -21,64 +35,98 @@ $app->get('/', function() use ($app) {
 	]);
 });
 
-// JSON and JSONP endpoint
-$app->get('/json', function() use ($app) {
-	try {
-		$cc = app(ComponentController::class)->run();
+// JSON(P)
+$app->group(['prefix' => 'json'], function() use ($app) {
 
-		if ($app->request->input('cache') == 'no') {
-			$cc->flush()->run();
-		}
-
-		// sort by order, then remove the order key
-		$data = $cc->getData()->sortBy('order')->map(function($e) {
-			return collect($e)->except('order');
-		});
-		$response = response()->json($data);
-	} catch (\Exception $e) {
-		return response()->json(['error' => $e->getMessage()], 500);
-	}
-
-	if ($cb = $app->request->input('callback')) {
+	// Data for all components
+	$app->get('', function() use ($app) {
 		try {
-			$response->setCallback($cb);
-		} catch (\InvalidArgumentException $e) {
-			return response()->json(['error' => $e->getMessage()], 400);
-		}
-	}
+			$cc = app(ComponentController::class)->run();
 
-	return $response;
-});
+			if ($app->request->input('cache') == 'no') {
+				$cc->flush()->run();
+			}
 
-// JSON and JSONP for single components
-$app->get('/json/{component}', function($component) use ($app) {
-	try {
-		$cc = app(ComponentController::class)->runOne($component);
-
-		if ($app->request->input('cache') == 'no') {
-			$cc->flush()->runOne($component);
+			// sort by order, then remove the order key
+			$data = $cc->getData()->sortBy('order')->map(function($e) {
+				unset($e['order']);
+				return $e;
+			});
+			$response = response()->json($data);
+		} catch (\Exception $e) {
+			return response()->json(['error' => $e->getMessage()], 500);
 		}
 
-		$data = collect($cc->getData()->get($component))->except('order');
-		$response = response()->json($data);
-	} catch (ComponentNotFoundException $e) {
-		return response()->json(['error' => $e->getMessage()], 404);
-	} catch (\Exception $e) {
-		return response()->json(['error' => $e->getMessage()], 500);
-	}
+		addCallbackOrFail($response);
+		return $response;
+	});
 
-	if ($cb = $app->request->input('callback')) {
+	// Data for a specific component
+	$app->get('component/{component}', function($component) use ($app) {
 		try {
-			$response->setCallback($cb);
-		} catch (\InvalidArgumentException $e) {
-			return response()->json(['error' => $e->getMessage()], 400);
-		}
-	}
+			$cc = app(ComponentController::class)->run($component);
 
-	return $response;
+			if ($app->request->input('cache') == 'no') {
+				$cc->flush()->runOne($component);
+			}
+
+			$data = collect($cc->getData()->get($component))->except('order');
+			$response = response()->json($data);
+		} catch (ComponentNotFoundException $e) {
+			return response()->json(['error' => $e->getMessage()], 404);
+		} catch (\Exception $e) {
+			return response()->json(['error' => $e->getMessage()], 500);
+		}
+
+		addCallbackOrFail($response);
+		return $response;
+	});
+
+	// Graph data for all components
+	$app->get('graph', function() use ($app) {
+		try {
+			$cc = app(ComponentController::class)->run();
+
+			if ($app->request->input('cache') == 'no') {
+				$cc->flush()->run();
+			}
+
+			$data = $cc->getGraphData();
+			$response = response()->json($data);
+		} catch (\Exception $e) {
+			return response()->json(['error' => $e->getMessage()], 500);
+		}
+
+		addCallbackOrFail($response);
+		return $response;
+	});
+
+	// Graph data for a specific component
+	$app->get('component/{component}/graph', function($component) use ($app) {
+		try {
+			$cc = app(ComponentController::class)->run($component);
+
+			if ($app->request->input('cache') == 'no') {
+				$cc->flush()->run($component);
+			}
+
+			$data = $cc->getGraphData()->get($component);
+			$response = response()->json($data);
+		} catch (ComponentNotFoundException $e) {
+			return response()->json(['error' => $e->getMessage()], 404);
+		} catch (\DomainException $e) {
+			return response()->json(['error' => $e->getMessage()], 400);
+		} catch (\Exception $e) {
+			return response()->json(['error' => $e->getMessage()], 500);
+		}
+
+		addCallbackOrFail($response);
+		return $response;
+	});
+
 });
 
 // Version number
 $app->get('/version', function() use ($app) {
-	return $app->version();
+	return response()->json(['version' => $app->version()]);
 });

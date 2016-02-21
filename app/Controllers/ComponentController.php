@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use App\Behaviors\Cacheable;
+use App\Behaviors\Graphable;
 use App\Exceptions\ComponentNotFoundException;
 use App\Models\Component;
 
@@ -45,35 +46,46 @@ class ComponentController extends Controller
 	}
 
 	/**
-	 * Activate all enabled components.
+	 * Activate all enabled components, or one specific component.
+	 * @param $component string Component class name
+	 * @param $force boolean Force re-registering and reloading components
 	 * @return ComponentController
 	 */
-	public function run()
+	public function run($component = null, $force = false)
 	{
-		foreach ($this->listComponents() as $path => $class) {
+		if ($component and !is_array($component)) {
+
+			if (!$force and $this->components->has($component)) {
+				return $this;
+			}
+
+			// initialize it
+			$class = $this->componentNamespace.$component;
+			$path = $this->componentsPath.'/'.$component;
+
 			$this->registerComponent($class, $path);
 			$this->loadComponent($class, $path);
+
+		} else {
+
+			// return components if already initialized
+			if (!$force and (
+				$component and !$this->components->intersect($component)->isEmpty()
+			) or (
+				!$this->components->isEmpty()
+			)) {
+				return $this;
+			}
+
+			$components = $component ?: $this->listComponents();
+
+			// initialize all components
+			foreach ($components as $path => $class) {
+				$this->registerComponent($class, $path);
+				$this->loadComponent($class, $path);
+			}
+
 		}
-		return $this;
-	}
-
-	/**
-	 * Activate a single component by name.
-	 * @return ComponentController
-	 */
-	public function runOne($name)
-	{
-		// if it's already stored, just return it
-		if ($this->components->has($name)) {
-			return $this->components->pull($name);
-		}
-
-		// initialize it
-		$class = $this->componentNamespace.$name;
-		$path = $this->componentsPath.'/'.$name;
-
-		$this->registerComponent($class, $path);
-		$this->loadComponent($class, $path);
 
 		return $this;
 	}
@@ -87,10 +99,10 @@ class ComponentController extends Controller
 			throw new \RuntimeException('No components registed');
 		}
 
-		$this->components->each(function($component) {
-			if ($component instanceOf Cacheable) {
-				$component::flush();
-			}
+		$this->components->filter(function($component) {
+			return $component instanceOf Cacheable;
+		})->each(function($component) {
+			$component::flush();
 		});
 
 		// reset components to force data reload
@@ -98,6 +110,26 @@ class ComponentController extends Controller
 		$this->registered = collect();
 
 		return $this;
+	}
+
+	public function getGraphData($period = null)
+	{
+		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
+			throw new \RuntimeException('No components registed');
+		}
+
+		$data = $this->components->filter(function($component) {
+			return $component instanceOf Graphable;
+		})->map(function($component) {
+			$component->run();
+			return $component->series();
+		});
+
+		if ($data->isEmpty()) {
+			throw new \DomainException('Component did not provide graph data');
+		}
+
+		return $data;
 	}
 
 	/**
