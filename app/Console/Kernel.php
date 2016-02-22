@@ -34,5 +34,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('components:put')->everyMinute();
+        $schedule->command('components:prune')->hourly();
     }
 }
