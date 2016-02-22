@@ -7,7 +7,7 @@ return [
 
 	'header' => [
 		'toolbar' => [
-			'graph-width' => 'Graph width',
+			'time-period' => 'Period',
 			'autoreload' => [
 				'enable' => 'Enable autoreload',
 				'disable' => 'Disable autoreload'
@@ -42,6 +42,10 @@ return [
 		'formats' => [
 			'date' => 'M/j',
 			'time' => 'H:i'
+		],
+		'relative' => [
+			'next' => 'next :value :units',
+			'previous' => 'last :value :units'
 		],
 		'minute' => 'minute|minutes',
 		'hour'   => 'hour|hours',

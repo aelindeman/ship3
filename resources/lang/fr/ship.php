@@ -7,7 +7,7 @@ return [
 
 	'header' => [
 		'toolbar' => [
-			'graph-width' => 'Granularité des graphes',
+			'time-period' => 'Période',
 			'autoreload' => [
 				'enable' => 'Activer rechargement automatique',
 				'disable' => 'Désactiver rechargement automatique'
@@ -42,6 +42,10 @@ return [
 		'formats' => [
 			'date' => 'M-j',
 			'time' => 'H\hi'
+		],
+		'relative' => [
+			'next' => ':value prochaines :units',
+			'previous' => ':value dernières :units'
 		],
 		'minute' => 'minute|minutes',
 		'hour'   => 'heure|heures',

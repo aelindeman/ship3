@@ -6,15 +6,22 @@
 	<h1>{{ config('app.title', app('translator')->get('ship.app')) }}</h1>
 	<nav class="primary-toolbar">
 		<ul>
+@if($components->count() > 0 and $components->has('Info'))
+	@if (view()->exists('Info::uptime'))
+			<li class="separator break">
+				@include ('Info::uptime', $components->get('Info'))
+			</li>
+	@endif
+@endif
 			<li class="separator">
 				<div class="input-container">
-					<label class="label-before" for="graph-width">@lang('ship.header.toolbar.graph-width')</label>
-					<select id="graph-width" class="input">
+					<label class="label-before" for="time-period">@lang('ship.header.toolbar.time-period')</label>
+					<select id="time-period" class="input">
 @foreach ([15, 30, 45, 60] as $m)
-						<option value="{{ $m }}M"{{ config('app.graph-width') == $m.'M' ? ' selected' : '' }}>{{ $m }} @choice('ship.time.minute', $m)</option>
+						<option value="{{ $m }}M"{{ config('app.graph-width') == $m.'M' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $m, 'units' => app('translator')->choice('ship.time.minute', $m)])</option>
 @endforeach
 @foreach ([2, 3, 6, 12, 24] as $h)
-						<option value="{{ $h }}H"{{ config('app.graph-width') == $h.'H' ? ' selected' : '' }}>{{ $h }} @choice('ship.time.hour', $h)</option>
+						<option value="{{ $h }}H"{{ config('app.graph-width') == $h.'H' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $h, 'units' => app('translator')->choice('ship.time.hour', $h)])</option>
 @endforeach
 					</select>
 				</div>
