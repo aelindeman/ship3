@@ -29,30 +29,53 @@
 	 */
 	ShipJS.prototype = {
 		autoreload: els.html.dataset.autoreload == 'on',
+		chartistOptions: {
+			axisX: {
+				type: Chartist.FixedScaleAxis,
+				showGrid: false,
+				labelInterpolationFnc: function(l) {
+					var d = new Date(l * 1000),
+						date = (d.getMonth() + 1) + '/' + d.getDate(),
+						time = ('00' + d.getHours()).slice(-2) + ':' + ('00' + d.getMinutes()).slice(-2);
+					return date + '<br />' + time;
+				},
+				divisor: 5
+			},
+			axisY: {
+				type: Chartist.AutoScaleAxis,
+				scaleMinSpace: 24,
+				showGrid: false,
+			},
+			chartPadding: {
+				top: 5,
+				right: 2.5,
+				bottom: 5,
+				left: 2.5
+			},
+			lineSmooth: false,
+			showPoint: false,
+			height: '100%',
+			width: '100%'
+		},
 		darkMode: els.html.className.indexOf('dark-mode') > -1,
 		graphWidth: els.graphWidth.value,
-		masonry: null,
 
 		/*
 		 * Initializes functions that need to be called on load.
 		 */
 		init: function()
 		{
-			this.bind();
-			this.masonry = new Masonry('.components .grid' , {
-				columnWidth: '.box',
-				itemSelector: '.box',
-				percentPosition: true,
-				transitionDuration: 0
-			});
+			this.bindButtonListeners();
+			this.ajax();
 		},
 
 		/*
 		 * Registers event listeners to elements that need them.
 		 */
-		bind: function()
+		bindButtonListeners: function()
 		{
-			var context = this;
+			var context = this,
+				graphTimeout;
 
 			// width setting
 			if (els.graphWidth) {
@@ -76,6 +99,65 @@
 					context.toggleLabels(event.target, context.darkMode);
 				});
 			}
+		},
+
+		/*
+		 * Fetches JSON data and parses
+		 */
+		ajax: function()
+		{
+			var context = this,
+				xhr = new XMLHttpRequest();
+			xhr.open('GET', '/json/graph?period=PT' + this.graphWidth + 'H&' + Math.random());
+			xhr.addEventListener('readystatechange', function(event) {
+				if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE) {
+					var data = JSON.parse(xhr.responseText);
+					context.drawComponents(data);
+					context.drawGraphs(data);
+				}
+			});
+			xhr.send();
+		},
+
+		/*
+		 * Draws components with a fresh set of data.
+		 */
+		drawComponents: function(data)
+		{
+			var components = document.getElementsByClassName('component'),
+				c = components.length;
+			while (c --) {
+				var component = components[c];
+
+			}
+		},
+
+		/*
+		 * Draws graphs with Chartist with a set of data.
+		 */
+		drawGraphs: function(data)
+		{
+			var graphs = document.getElementsByClassName('graph'),
+				g = graphs.length;
+			while (g --) {
+				var graph = graphs[g],
+					series;
+				if (graph.dataset.graph && (series = data[graph.dataset.graph])) {
+					Chartist.Line(graph, {
+						series: [series]
+					}, this.chartistOptions);
+				}
+			}
+		},
+
+		range: function(start, end)
+		{
+			var a = [],
+				c = end - start + 1;
+			while (c --) {
+				a[c] = end --;
+			}
+			return a;
 		},
 
 		/*
@@ -110,7 +192,11 @@
 			}
 			var labels = target.dataset.labels.split('|');
 			target.innerHTML = labels[to ? 1 : 0];
-		}
+		},
+
+		/*
+		 *
+		 */
 	};
 
 	/*

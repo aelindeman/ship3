@@ -1,9 +1,13 @@
 <?php
 
 namespace App\Components;
+use App\Behaviors\Graphable;
 use App\Models\Component;
 
-class LoadAverage extends Component
+use Carbon\Carbon;
+use \DateInterval;
+
+class LoadAverage extends Component implements Graphable
 {
 	protected $table = 'load';
 	protected $fillable = [
@@ -25,5 +29,24 @@ class LoadAverage extends Component
 			'five'    => (float)$p[1],
 			'fifteen' => (float)$p[2]
 		];
+	}
+
+	public function series(DateInterval $period = null, $limit = null)
+	{
+		$since = $period ?
+			Carbon::now()->sub($period) :
+			Carbon::now()->subHours(3);
+
+		$data = static::where('time', '>=', $since)
+			->orderBy('time', 'asc')
+			->take($limit)
+			->get();
+
+		return $data->map(function($entry, $index) {
+			return [
+				'x' => Carbon::parse($entry->time)->timestamp,
+				'y' => $entry->five,
+			];
+		});
 	}
 }

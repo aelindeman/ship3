@@ -33,8 +33,7 @@ abstract class Component extends Model implements Fetchable, Parseable
 	}
 
 	/*
-	 * Default constructor tries to run the component, and writes to the log if
-	 *   something went wrong.
+	 * Default constructor tries to run the component.
 	 */
 	public function __construct()
 	{

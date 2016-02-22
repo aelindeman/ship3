@@ -30,8 +30,14 @@ function addCallbackOrFail(&$response)
 
 // Home view
 $app->get('/', function() use ($app) {
+	$cc = app(ComponentController::class)->run();
+
+	if ($app->request->input('cache') == 'no') {
+		$cc->flush()->run($component);
+	}
+
 	return view('home', [
-		'components' => app(ComponentController::class)->run()->getData()
+		'components' => $cc->getData()
 	]);
 });
 
@@ -110,7 +116,10 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 				$cc->flush()->run($component);
 			}
 
-			$data = $cc->getGraphData()->get($component);
+			$period = new \DateInterval($app->request->input('period'));
+			$limit = $app->request->input('limit');
+
+			$data = $cc->getGraphData($period, $limit)->get($component);
 			$response = response()->json($data);
 		} catch (ComponentNotFoundException $e) {
 			return response()->json(['error' => $e->getMessage()], 404);
