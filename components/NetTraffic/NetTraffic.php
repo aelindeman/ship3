@@ -65,8 +65,8 @@ class NetTraffic extends Component implements Graphable
 	public static function series(\DateInterval $period = null, $limit = null)
 	{
 		$since = $period ?
-			Carbon::now()->sub($period) :
-			Carbon::now()->subHours(config('app.graph-width'));
+			app('carbon')->now()->sub($period) :
+			app('carbon')->now()->subHours(config('app.graph-width'));
 
 		$data = static::where('time', '>=', $since)
 			->orderBy('time', 'asc')
@@ -74,17 +74,25 @@ class NetTraffic extends Component implements Graphable
 			->get();
 
 		$tx = $data->map(function($entry, $index) {
-			return [
-				'x' => Carbon::parse($entry->time)->timestamp,
-				'y' => $entry->tx,
-			];
+			if ($previous = $entry->previous()) {
+				$t = $entry->tx - $previous->tx;
+				return [
+					'x' => app('carbon')->parse($entry->time)->timestamp,
+					'y' => $t,
+				];
+			}
+			return null;
 		});
 
 		$rx = $data->map(function($entry, $index) {
-			return [
-				'x' => Carbon::parse($entry->time)->timestamp,
-				'y' => $entry->rx,
-			];
+			if ($previous = $entry->previous()) {
+				$r = $entry->rx - $previous->rx;
+				return [
+					'x' => app('carbon')->parse($entry->time)->timestamp,
+					'y' => $r,
+				];
+			}
+			return null;
 		});
 
 		return [$tx, $rx];

@@ -76,4 +76,16 @@ abstract class Component extends Model implements Fetchable, Parseable
 
 		return $this->output;
 	}
+
+	/**
+	 * Fetch the previous record.
+	 * Mainly used by Graphable components which want to display the derivative
+	 *   of their data, but can only fetch their totals.
+	 */
+	public function previous()
+	{
+		return $this::where('time', '<', $this->time)
+			->orderBy('time', 'desc')
+			->first(); 
+	}
 }

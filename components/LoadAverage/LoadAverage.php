@@ -33,8 +33,8 @@ class LoadAverage extends Component implements Graphable
 	public static function series(\DateInterval $period = null, $limit = null)
 	{
 		$since = $period ?
-			Carbon::now()->sub($period) :
-			Carbon::now()->subHours(config('app.graph-width'));
+			app('carbon')->now()->sub($period) :
+			app('carbon')->now()->subHours(config('app.graph-width'));
 
 		$data = static::where('time', '>=', $since)
 			->orderBy('time', 'asc')
@@ -43,7 +43,7 @@ class LoadAverage extends Component implements Graphable
 
 		$five = $data->map(function($entry, $index) {
 			return [
-				'x' => Carbon::parse($entry->time)->timestamp,
+				'x' => app('carbon')->parse($entry->time)->timestamp,
 				'y' => $entry->five,
 			];
 		});

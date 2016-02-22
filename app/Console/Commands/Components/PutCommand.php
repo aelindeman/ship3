@@ -39,7 +39,7 @@ class PutCommand extends Command
      */
     public function fire()
     {
-        $time = date('Y-m-d H:i:s');
+        $time = app('carbon')->tz('UTC')->now();
         $this->info('Running '.$this->name.' for '.$time.':');
 
         foreach ($this->components->getComponents() as $name => $class) {
