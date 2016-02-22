@@ -1,11 +1,16 @@
 @import (once) 'variables.less';
+@import (once) 'generic.less';
+
+@import (once) 'components.less';
+@import (once) 'elements.less';
+@import (once) 'color-schemes.less';
 
 // Page
 html {
+	font: normal 300 1em/1.25 @font-sans;
 	body {
 		background-color: #eee;
 		color: #393e46;
-		font: normal 300 1em/1.25 'Source Sans Pro', sans-serif;
 		min-width: 13em;
 		padding: 1em;
 		transition: background-color @transition, color @transition;
@@ -19,6 +24,7 @@ html {
 		color: #eee;
 		content: attr(data-env);
 		font-size: 0.75em;
+		font-weight: 600;
 		left: 0;
 		padding: 0.5em 0.75em;
 		position: absolute;
@@ -127,10 +133,6 @@ main > header {
 		}
 	}
 }
-
-@import (once) 'components.less';
-@import (once) 'elements.less';
-@import (once) 'color-schemes.less';
 
 // Page footer
 main > footer {
