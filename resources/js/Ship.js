@@ -6,7 +6,7 @@
 (function() {
 	'use strict';
 
-	var autoreload, chartistOptions, darkMode, selfUpdate, timePeriod;
+	var autoreload, chartistOptions, darkMode, selfUpdate, timePeriod, uptimeAnimation;
 
 	/*
 	 * Class constructor
@@ -20,8 +20,9 @@
 	var els = {
 		html: document.documentElement,
 		autoreloadToggle: document.getElementById('autoreload-toggle'),
-		timePeriod: document.getElementById('graph-width'),
-		themeToggle: document.getElementById('theme-toggle')
+		timePeriod: document.getElementById('time-period'),
+		themeToggle: document.getElementById('theme-toggle'),
+		uptime: document.getElementById('uptime')
 	};
 
 	/*
@@ -67,10 +68,16 @@
 			interval: 60 * 1000
 		};
 		this.timePeriod = els.timePeriod.value;
+		this.uptimeAnimation = {
+			callback: null,
+			interval: 1000
+		};
 
 		this.bindButtonListeners();
 		this.bindSelfUpdate();
 		this.fetchGraphs();
+
+		this.animateUptime();
 	};
 
 	/*	
@@ -99,6 +106,18 @@
 				});
 			}
 		}
+	};
+
+	/*
+	 * Animates the uptime.
+	 */
+	ShipJS.prototype.animateUptime = function()
+	{
+		clearTimeout(this.uptimeAnimation.callback);
+		this.uptimeAnimation.callback = setInterval(function() {
+			var set = els.uptime.dataset.format;
+			els.uptime.innerHTML = set;
+		}, this.uptimeAnimation.interval);
 	};
 
 	/*
@@ -141,11 +160,10 @@
 	{
 		var context = this;
 		clearInterval(this.selfUpdate.callback);
-		this.selfUpdate.callback = setInterval(function(e) {
+		this.selfUpdate.callback = setInterval(function() {
 			context.fetchGraphs();
 			context.fetchComponents();
 		}, this.selfUpdate.interval);
-		console.log(['Bound selfUpdate', this.selfUpdate]);
 	};
 
 	/*
