@@ -32,29 +32,26 @@
 		chartistOptions: {
 			axisX: {
 				type: Chartist.FixedScaleAxis,
-				showGrid: false,
-				labelInterpolationFnc: function(l) {
-					var d = new Date(l * 1000),
+				divisor: 5,
+				labelInterpolationFnc: function(label) {
+					var d = new Date(label * 1000),
 						date = (d.getMonth() + 1) + '/' + d.getDate(),
 						time = ('00' + d.getHours()).slice(-2) + ':' + ('00' + d.getMinutes()).slice(-2);
 					return date + '<br />' + time;
 				},
-				divisor: 5
+				offset: 28,
+				showGrid: false,
 			},
 			axisY: {
 				type: Chartist.AutoScaleAxis,
-				scaleMinSpace: 24,
+				offset: 32,
+				scaleMinSpace: 0,
 				showGrid: false,
 			},
-			chartPadding: {
-				top: 5,
-				right: 2.5,
-				bottom: 5,
-				left: 2.5
-			},
+			chartPadding: 0,
+			height: '100%',
 			lineSmooth: false,
 			showPoint: false,
-			height: '100%',
 			width: '100%'
 		},
 		darkMode: els.html.className.indexOf('dark-mode') > -1,
@@ -66,7 +63,35 @@
 		init: function()
 		{
 			this.bindButtonListeners();
-			this.ajax();
+			this.fetchGraphs();
+		},
+
+		/*
+		 * Animates graphs.
+		 */
+		animateGraph: function(data)
+		{
+			if (window.innerWidth >= 800) {
+				if (data.type === 'line' || data.type === 'area') {
+					var padding = data.chartRect.padding.bottom + data.chartRect.padding.top;
+					data.element.animate({
+						opacity: {
+							begin: 250 * data.index + 125,
+							dur: 750,
+							from: 0,
+							to: 1,
+							easing: Chartist.Svg.Easing.easeOutQuint
+						},
+						d: {
+							begin: 250 * data.index,
+							dur: 1000,
+							from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height() + padding).stringify(),
+							to: data.path.clone().stringify(),
+							easing: Chartist.Svg.Easing.easeOutQuint
+						}
+					});
+				}
+			}
 		},
 
 		/*
@@ -102,21 +127,16 @@
 		},
 
 		/*
-		 * Fetches JSON data and parses
+		 * Creates a query string from an object.
+		 * http://stackoverflow.com/a/30707423
 		 */
-		ajax: function()
+		createQueryString: function(url, data)
 		{
-			var context = this,
-				xhr = new XMLHttpRequest();
-			xhr.open('GET', '/json/graph?period=PT' + this.graphWidth + 'H&' + Math.random());
-			xhr.addEventListener('readystatechange', function(event) {
-				if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE) {
-					var data = JSON.parse(xhr.responseText);
-					context.drawComponents(data);
-					context.drawGraphs(data);
-				}
-			});
-			xhr.send();
+			return url + '?' +
+				Object.keys(data).map(function(key) {
+					return encodeURIComponent(key) + '=' +
+						encodeURIComponent(data[key]);
+				}).join('&');
 		},
 
 		/*
@@ -135,29 +155,44 @@
 		/*
 		 * Draws graphs with Chartist with a set of data.
 		 */
-		drawGraphs: function(data)
+		drawGraphs: function(data, extraOptions)
 		{
-			var graphs = document.getElementsByClassName('graph'),
-				g = graphs.length;
+			var context = this,
+				graphs = document.getElementsByClassName('graph'),
+				g = graphs.length,
+				opts = this.chartistOptions;
+
 			while (g --) {
 				var graph = graphs[g],
 					series;
 				if (graph.dataset.graph && (series = data[graph.dataset.graph])) {
-					Chartist.Line(graph, {
-						series: [series]
-					}, this.chartistOptions);
+					Chartist.Line(graph, { series: [series] }, opts)
+						.on('draw', context.animateGraph);
 				}
 			}
 		},
 
-		range: function(start, end)
+		/*
+		 * Fetches JSON data for graphs.
+		 */
+		fetchGraphs: function()
 		{
-			var a = [],
-				c = end - start + 1;
-			while (c --) {
-				a[c] = end --;
-			}
-			return a;
+			var context = this,
+				xhr = new XMLHttpRequest();
+
+			xhr.open('GET', this.createQueryString('/json/graph', {
+				period: 'PT' + this.graphWidth + 'H'
+			}));
+
+			xhr.addEventListener('readystatechange', function(event) {
+				if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE) {
+					var data = JSON.parse(xhr.responseText);
+					context.drawComponents(data);
+					context.drawGraphs(data);
+				}
+			});
+
+			xhr.send();
 		},
 
 		/*
