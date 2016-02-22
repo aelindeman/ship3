@@ -11,5 +11,5 @@ interface Graphable
 	 *   $limit many records.
 	 * @return array
 	 */
-	public function series(\DateInterval $period = null, $limit = false);
+	public static function series(\DateInterval $period = null, $limit = false);
 }

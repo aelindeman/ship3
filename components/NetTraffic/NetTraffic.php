@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Components;
+use App\Behaviors\Graphable;
 use App\Models\Component;
 
-class NetTraffic extends Component
+use Carbon\Carbon;
+
+class NetTraffic extends Component implements Graphable
 {
 	protected $table = 'nettraffic';
 	protected $fillable = [
@@ -57,5 +60,33 @@ class NetTraffic extends Component
 			'rx' => $rx,
 			'tx' => $tx
 		];
+	}
+
+	public static function series(\DateInterval $period = null, $limit = null)
+	{
+		$since = $period ?
+			Carbon::now()->sub($period) :
+			Carbon::now()->subHours(config('app.graph-width'));
+
+		$data = static::where('time', '>=', $since)
+			->orderBy('time', 'asc')
+			->take($limit)
+			->get();
+
+		$tx = $data->map(function($entry, $index) {
+			return [
+				'x' => Carbon::parse($entry->time)->timestamp,
+				'y' => $entry->tx,
+			];
+		});
+
+		$rx = $data->map(function($entry, $index) {
+			return [
+				'x' => Carbon::parse($entry->time)->timestamp,
+				'y' => $entry->rx,
+			];
+		});
+
+		return [$tx, $rx];
 	}
 }

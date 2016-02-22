@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Components;
+use App\Behaviors\Graphable;
 use App\Models\Component;
 
-class DiskActivity extends Component
+use Carbon\Carbon;
+
+class DiskActivity extends Component implements Graphable
 {
 	protected $table = 'disk';
 	protected $fillable = [
@@ -82,5 +85,33 @@ class DiskActivity extends Component
 			'read' => $reads,
 			'write' => $writes
 		];
+	}
+
+	public static function series(\DateInterval $period = null, $limit = null)
+	{
+		$since = $period ?
+			Carbon::now()->sub($period) :
+			Carbon::now()->subHours(config('app.graph-width'));
+
+		$data = static::where('time', '>=', $since)
+			->orderBy('time', 'asc')
+			->take($limit)
+			->get();
+
+		$read = $data->map(function($entry, $index) {
+			return [
+				'x' => Carbon::parse($entry->time)->timestamp,
+				'y' => $entry->read,
+			];
+		});
+
+		$write = $data->map(function($entry, $index) {
+			return [
+				'x' => Carbon::parse($entry->time)->timestamp,
+				'y' => $entry->write,
+			];
+		});
+
+		return [$read, $write];
 	}
 }

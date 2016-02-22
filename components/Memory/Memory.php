@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Components;
+use App\Behaviors\Graphable;
 use App\Models\Component;
 
-class Memory extends Component
+use Carbon\Carbon;
+
+class Memory extends Component implements Graphable
 {
 	protected $table = 'memory';
 	protected $fillable = [
@@ -41,5 +44,26 @@ class Memory extends Component
 			'cached' => (int)$m['Cached'],
 			'total'  => (int)$m['MemTotal']
 		];
+	}
+
+	public static function series(\DateInterval $period = null, $limit = null)
+	{
+		$since = $period ?
+			Carbon::now()->sub($period) :
+			Carbon::now()->subHours(config('app.graph-width'));
+
+		$data = static::where('time', '>=', $since)
+			->orderBy('time', 'asc')
+			->take($limit)
+			->get();
+
+		$used = $data->map(function($entry, $index) {
+			return [
+				'x' => Carbon::parse($entry->time)->timestamp,
+				'y' => $entry->used,
+			];
+		});
+
+		return [$used];
 	}
 }

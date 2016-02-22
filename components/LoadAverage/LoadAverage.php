@@ -30,22 +30,24 @@ class LoadAverage extends Component implements Graphable
 		];
 	}
 
-	public function series(\DateInterval $period = null, $limit = null)
+	public static function series(\DateInterval $period = null, $limit = null)
 	{
 		$since = $period ?
 			Carbon::now()->sub($period) :
-			Carbon::now()->subHours(3);
+			Carbon::now()->subHours(config('app.graph-width'));
 
 		$data = static::where('time', '>=', $since)
 			->orderBy('time', 'asc')
 			->take($limit)
 			->get();
 
-		return $data->map(function($entry, $index) {
+		$five = $data->map(function($entry, $index) {
 			return [
 				'x' => Carbon::parse($entry->time)->timestamp,
 				'y' => $entry->five,
 			];
 		});
+
+		return [$five];
 	}
 }
