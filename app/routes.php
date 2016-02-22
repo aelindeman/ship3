@@ -6,7 +6,7 @@ use App\Exceptions\ComponentNotFoundException;
 /**
  * Quick helper function for adding JSONP/callback support to responses.
  */
-function addCallbackOrFail(&$response)
+function addJsonCallbackOrFail($response)
 {
 	if ($cb = app('request')->input('callback')) {
 		try {
@@ -15,6 +15,8 @@ function addCallbackOrFail(&$response)
 			$response = response()->json(['error' => $e->getMessage()], 400);
 		}
 	}
+
+	return $response;
 }
 
 /*
@@ -63,8 +65,7 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 			return response()->json(['error' => $e->getMessage()], 500);
 		}
 
-		addCallbackOrFail($response);
-		return $response;
+		return addJsonCallbackOrFail($response);
 	});
 
 	// Data for a specific component
@@ -84,8 +85,7 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 			return response()->json(['error' => $e->getMessage()], 500);
 		}
 
-		addCallbackOrFail($response);
-		return $response;
+		return addJsonCallbackOrFail($response);
 	});
 
 	// Graph data for all components
@@ -103,8 +103,7 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 			return response()->json(['error' => $e->getMessage()], 500);
 		}
 
-		addCallbackOrFail($response);
-		return $response;
+		return addJsonCallbackOrFail($response);
 	});
 
 	// Graph data for a specific component
@@ -116,7 +115,10 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 				$cc->flush()->run($component);
 			}
 
-			$period = new \DateInterval($app->request->input('period'));
+			$period = $app->request->input('period') ?
+				new \DateInterval($app->request->input('period')) :
+				new \DateInterval('PT'.config('app.graph-width').'H');
+			
 			$limit = $app->request->input('limit');
 
 			$data = $cc->getGraphData($period, $limit)->get($component);
@@ -129,8 +131,7 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 			return response()->json(['error' => $e->getMessage()], 500);
 		}
 
-		addCallbackOrFail($response);
-		return $response;
+		return addJsonCallbackOrFail($response);
 	});
 
 });
