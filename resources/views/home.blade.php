@@ -44,3 +44,12 @@
 	<p>@lang('ship.footer.slogan') {{ $app->version() }} - <a href="http://ael.me/ship/">ael.me/ship</a></p>
 </footer>
 @endsection
+
+@section ('scripts')
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist.min.js"></script>
+<script type="text/javascript" src="{{ url('ship.min.js') }}"></script>
+@endsection
+
+@section ('styles')
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist.min.css">
+@endsection
