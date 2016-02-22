@@ -1,8 +1,8 @@
-<article id="Memory" class="component">
+<article id="Memory" class="component theme-green">
 	<header>
 		<h2><span>@lang('Memory::component.header')</span></h2>
 	</header>
-	<div data-graph="Memory" class="graph"></div>
+	<div data-graph="Memory" data-graph-yaxis-units="kb" class="graph"></div>
 	<section>
 
 		<div class="field">

@@ -1,8 +1,8 @@
-<article id="DiskActivity" class="component">
+<article id="DiskActivity" class="component theme-red">
 	<header>
 		<h2><span>@lang('DiskActivity::component.header')</span></h2>
 	</header>
-	<div data-graph="DiskActivity" class="graph"></div>
+	<div data-graph="DiskActivity" data-graph-yaxis-units="kb" class="graph"></div>
 	<section>
 
 		<div class="field">

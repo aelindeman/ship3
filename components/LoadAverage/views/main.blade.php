@@ -2,7 +2,7 @@
 	<header>
 		<h2><span>@lang('LoadAverage::component.header')</span></h2>
 	</header>
-	<div data-graph="LoadAverage" class="graph"></div>
+	<div data-graph="LoadAverage" data-graph-yaxis-units="staticTwoDecimal" class="graph"></div>
 	<section>
 	
 		<div class="field">

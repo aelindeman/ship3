@@ -40,15 +40,21 @@
 					return date + '<br />' + time;
 				},
 				offset: 28,
+				scaleMinSpace: 0,
 				showGrid: false,
 			},
 			axisY: {
 				type: Chartist.AutoScaleAxis,
-				offset: 32,
+				offset: 48,
 				scaleMinSpace: 0,
 				showGrid: false,
 			},
-			chartPadding: 0,
+			chartPadding: {
+				top: 12,
+				left: 0,
+				bottom: 0,
+				right: 0
+			},
 			height: '100%',
 			lineSmooth: false,
 			showPoint: false,
@@ -155,18 +161,51 @@
 		/*
 		 * Draws graphs with Chartist with a set of data.
 		 */
-		drawGraphs: function(data, extraOptions)
+		drawGraphs: function(data)
 		{
 			var context = this,
 				graphs = document.getElementsByClassName('graph'),
-				g = graphs.length,
-				opts = this.chartistOptions;
+				g = graphs.length;
+
+			function axisLabelInterpolate_kb(value) {
+				var sizes = ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k'],
+					unit = sizes.length;
+
+				while (unit -- && value > 1024) {
+					value /= 1024;
+				}
+
+				var decimals = value < 10 ? 2 : (value < 100 ? 1 : 0);
+				return +value.toFixed(decimals) + sizes[unit];
+			}
+
+			function axisLabelInterpolate_staticTwoDecimal(value) {
+				return value.toFixed(2);
+			}
 
 			while (g --) {
-				var graph = graphs[g],
+				var opts = this.chartistOptions,
+					graph = graphs[g],
 					series;
+
 				if (graph.dataset.graph && (series = data[graph.dataset.graph])) {
-					Chartist.Line(graph, { series: [series] }, opts)
+					if (graph.dataset.graphYaxisUnits) {
+						switch (graph.dataset.graphYaxisUnits) {
+							case 'kb':
+								opts.axisY.labelInterpolationFnc = axisLabelInterpolate_kb;
+								break;
+							case 'staticTwoDecimal':
+								opts.axisY.labelInterpolationFnc = axisLabelInterpolate_staticTwoDecimal;
+								break;
+							default:
+								opts.axisY.labelInterpolationFnc = Chartist.noop;
+								break;
+						}
+					} else {
+						opts.axisY.labelInterpolationFnc = Chartist.noop;
+					}
+
+					Chartist.Line(graph, { series: series }, opts)
 						.on('draw', context.animateGraph);
 				}
 			}

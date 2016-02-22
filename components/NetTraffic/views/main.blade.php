@@ -1,8 +1,8 @@
-<article id="NetTraffic" class="component">
+<article id="NetTraffic" class="component theme-purple">
 	<header>
 		<h2><span>@lang('NetTraffic::component.header')</span></h2>
 	</header>
-	<div data-graph="NetTraffic" class="graph"></div>
+	<div data-graph="NetTraffic" data-graph-yaxis-units="kb" class="graph"></div>
 	<section>
 
 		<div class="field">
