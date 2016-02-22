@@ -2,10 +2,9 @@
 	<header>
 		<h2><span>@lang('LoadAverage::component.header')</span></h2>
 	</header>
+	<div data-graph="LoadAverage" class="graph"></div>
 	<section>
-
-		<div data-graph="LoadAverage" class="graph"></div>
-
+	
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('LoadAverage::component.load')</span>
 			<span class="value">

@@ -2,9 +2,8 @@
 	<header>
 		<h2><span>@lang('DiskActivity::component.header')</span></h2>
 	</header>
+	<div data-graph="DiskActivity" class="graph"></div>
 	<section>
-
-		<div data-graph="DiskActivity" class="graph"></div>
 
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('DiskActivity::component.read')</span>

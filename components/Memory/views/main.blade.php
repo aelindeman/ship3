@@ -2,9 +2,8 @@
 	<header>
 		<h2><span>@lang('Memory::component.header')</span></h2>
 	</header>
+	<div data-graph="Memory" class="graph"></div>
 	<section>
-
-		<div data-graph="Memory" class="graph"></div>
 
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('Memory::component.labels.used')</span>

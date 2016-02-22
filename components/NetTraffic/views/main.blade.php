@@ -2,9 +2,8 @@
 	<header>
 		<h2><span>@lang('NetTraffic::component.header')</span></h2>
 	</header>
+	<div data-graph="NetTraffic" class="graph"></div>
 	<section>
-
-		<div data-graph="NetTraffic" class="graph"></div>
 
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('NetTraffic::component.transmit')</span>
