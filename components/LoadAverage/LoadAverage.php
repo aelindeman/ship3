@@ -5,7 +5,6 @@ use App\Behaviors\Graphable;
 use App\Models\Component;
 
 use Carbon\Carbon;
-use \DateInterval;
 
 class LoadAverage extends Component implements Graphable
 {
@@ -31,7 +30,7 @@ class LoadAverage extends Component implements Graphable
 		];
 	}
 
-	public function series(DateInterval $period = null, $limit = null)
+	public function series(\DateInterval $period = null, $limit = null)
 	{
 		$since = $period ?
 			Carbon::now()->sub($period) :
