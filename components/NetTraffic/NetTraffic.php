@@ -4,7 +4,7 @@ namespace App\Components;
 use App\Behaviors\Graphable;
 use App\Models\Component;
 
-use Carbon\Carbon;
+use DateInterval;
 
 class NetTraffic extends Component implements Graphable
 {
@@ -62,20 +62,21 @@ class NetTraffic extends Component implements Graphable
 		];
 	}
 
-	public static function series(\DateInterval $period = null, $limit = null)
+	public function series(DateInterval $period = null)
 	{
 		$since = $period ?
 			app('carbon')->now()->sub($period) :
 			app('carbon')->now()->subHours(config('app.graph-width'));
 
-		$data = static::where('time', '>=', $since)
-			->orderBy('time', 'asc')
-			->take($limit)
-			->get();
+		$query = app('db')->table($this->table)
+			->where('time', '>=', $since)
+			->orderBy('time', 'asc');
 
-		$tx = $data->map(function($entry, $index) {
-			if ($previous = $entry->previous()) {
-				$t = $entry->tx - $previous->tx;
+		$data = collect($query->get());
+
+		$tx = $data->map(function($entry, $index) use ($data) {
+			if ($previous = $data->get($index - 1)) {
+				$t = ($entry->tx - $previous->tx) / 60;
 				return [
 					'x' => app('carbon')->parse($entry->time)->timestamp,
 					'y' => $t,
@@ -84,9 +85,9 @@ class NetTraffic extends Component implements Graphable
 			return null;
 		});
 
-		$rx = $data->map(function($entry, $index) {
-			if ($previous = $entry->previous()) {
-				$r = $entry->rx - $previous->rx;
+		$rx = $data->map(function($entry, $index) use ($data) {
+			if ($previous = $data->get($index - 1)) {
+				$r = ($entry->rx - $previous->rx) / 60;
 				return [
 					'x' => app('carbon')->parse($entry->time)->timestamp,
 					'y' => $r,

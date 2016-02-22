@@ -1,7 +1,10 @@
 <?php
 
+namespace App;
 use App\Controllers\ComponentController;
 use App\Exceptions\ComponentNotFoundException;
+
+use DateInterval;
 
 /**
  * Quick helper function for adding JSONP/callback support to responses.
@@ -97,7 +100,13 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 				$cc->flush()->run();
 			}
 
-			$data = $cc->getGraphData();
+			$period = $app->request->input('period') ?
+				new DateInterval($app->request->input('period')) :
+				new DateInterval('PT'.config('app.graph-width'));
+			
+			$limit = $app->request->input('limit');
+
+			$data = $cc->getGraphData($period, $limit);
 			$response = response()->json($data);
 		} catch (\Exception $e) {
 			return response()->json(['error' => $e->getMessage()], 500);
@@ -116,8 +125,8 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 			}
 
 			$period = $app->request->input('period') ?
-				new \DateInterval($app->request->input('period')) :
-				new \DateInterval('PT'.config('app.graph-width').'H');
+				new DateInterval($app->request->input('period')) :
+				new DateInterval('PT'.config('app.graph-width'));
 			
 			$limit = $app->request->input('limit');
 

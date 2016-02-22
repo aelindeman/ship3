@@ -27,7 +27,7 @@ return [
 	/*
 	 * How many hours' worth of data should graphs show by default?
 	 */
-	'graph-width' => env('SHIP_GRAPH_WIDTH', 3),
+	'graph-width' => env('SHIP_GRAPH_WIDTH', '3H'),
 
 	/*
 	 * Should components automatically refresh their data?

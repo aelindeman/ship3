@@ -4,6 +4,8 @@ namespace App\Components;
 use App\Behaviors\Graphable;
 use App\Models\Component;
 
+use DateInterval;
+
 class DiskActivity extends Component implements Graphable
 {
 	protected $table = 'disk';
@@ -85,20 +87,21 @@ class DiskActivity extends Component implements Graphable
 		];
 	}
 
-	public static function series(\DateInterval $period = null, $limit = null)
+	public function series(DateInterval $period = null)
 	{
 		$since = $period ?
 			app('carbon')->now()->sub($period) :
 			app('carbon')->now()->subHours(config('app.graph-width'));
 
-		$data = static::where('time', '>=', $since)
-			->orderBy('time', 'desc')
-			->take($limit)
-			->get();
+		$query = app('db')->table($this->table)
+			->where('time', '>=', $since)
+			->orderBy('time', 'asc');
+
+		$data = collect($query->get());
 
 		$read = $data->map(function($entry, $index) use ($data) {
-			if ($previous = $entry->previous()) {
-				$r = $entry->read - $previous->read;
+			if ($previous = $data->get($index - 1)) {
+				$r = ($entry->read - $previous->read) / 60;
 				return [
 					'x' => app('carbon')->parse($entry->time)->timestamp,
 					'y' => $r,
@@ -108,15 +111,14 @@ class DiskActivity extends Component implements Graphable
 		});
 
 		$write = $data->map(function($entry, $index) use ($data) {
-			if ($previous = $entry->previous()) {
-				$w = $entry->write - $previous->write;
+			if ($previous = $data->get($index - 1)) {
+				$w = ($entry->write - $previous->write) / 60;
 				return [
 					'x' => app('carbon')->parse($entry->time)->timestamp,
 					'y' => $w,
 				];
 			}
 			return null;
-
 		});
 
 		return [$read, $write];

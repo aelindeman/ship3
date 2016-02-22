@@ -4,7 +4,7 @@ namespace App\Components;
 use App\Behaviors\Graphable;
 use App\Models\Component;
 
-use Carbon\Carbon;
+use DateInterval;
 
 class LoadAverage extends Component implements Graphable
 {
@@ -30,16 +30,17 @@ class LoadAverage extends Component implements Graphable
 		];
 	}
 
-	public static function series(\DateInterval $period = null, $limit = null)
+	public function series(DateInterval $period = null)
 	{
 		$since = $period ?
 			app('carbon')->now()->sub($period) :
 			app('carbon')->now()->subHours(config('app.graph-width'));
 
-		$data = static::where('time', '>=', $since)
-			->orderBy('time', 'asc')
-			->take($limit)
-			->get();
+		$query = app('db')->table($this->table)
+			->where('time', '>=', $since)
+			->orderBy('time', 'asc');
+
+		$data = collect($query->get());
 
 		$five = $data->map(function($entry, $index) {
 			return [

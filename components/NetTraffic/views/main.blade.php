@@ -2,7 +2,7 @@
 	<header>
 		<h2><span>@lang('NetTraffic::component.header')</span></h2>
 	</header>
-	<div data-graph="NetTraffic" data-graph-yaxis-units="kb" class="graph"></div>
+	<div data-graph="NetTraffic" data-graph-yaxis-units="kb/s" class="graph"></div>
 	<section>
 
 		<div class="field">
