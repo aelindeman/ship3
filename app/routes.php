@@ -103,7 +103,7 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 			$period = $app->request->input('period') ?
 				new DateInterval($app->request->input('period')) :
 				new DateInterval('PT'.config('app.graph-width'));
-			
+
 			$limit = $app->request->input('limit');
 
 			$data = $cc->getGraphData($period, $limit);
@@ -127,7 +127,7 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 			$period = $app->request->input('period') ?
 				new DateInterval($app->request->input('period')) :
 				new DateInterval('PT'.config('app.graph-width'));
-			
+
 			$limit = $app->request->input('limit');
 
 			$data = $cc->getGraphData($period, $limit)->get($component);
@@ -143,6 +143,31 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 		return addJsonCallbackOrFail($response);
 	});
 
+});
+
+// Language files for Javascript
+$app->get('/lang.min.js', function() use ($app) {
+	try {
+		$registered = app(ComponentController::class)->registerComponents();
+
+		$lang = collect();
+		$lang->put('ship', $app->translator->get('ship'));
+
+		foreach ($registered as $class => $path) {
+			$name = app(ComponentController::class)->getComponentName($class);
+			if ($app->translator->has($name.'::component')) {
+				$lang->put($name, $app->translator->get($name.'::component'));
+			}
+		}
+
+		return response()->json($lang)
+			->setCallback('ShipJS.registerLang')
+			->withHeaders([
+				'Cache-Control' => 'public, max-age=86400',
+			]);
+	} catch (\Exception $e) {
+		return response()->json(['error' => $e->getMessage()], 500);
+	}
 });
 
 // Version number

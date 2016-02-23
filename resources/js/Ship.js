@@ -6,14 +6,20 @@
 (function() {
 	'use strict';
 
-	var autoreload, chartistOptions, darkMode, selfUpdate, timePeriod, uptimeAnimation;
+	var autoreload, chartistOptions, darkMode, lang,
+		selfUpdate, timePeriod, uptimeAnimation;
 
 	/*
 	 * Class constructor
 	 */
 	function ShipJS()
 	{
-		this.init();
+		if (!window.Chartist) {
+			console.warn('Chartist is required');
+			return;
+		}
+
+		return this.init();
 	}
 
 	// keep track of some elements to reduce number of DOM interactions
@@ -63,6 +69,7 @@
 			width: '100%'
 		};
 		this.darkMode = els.html.className.indexOf('dark-mode') > -1;
+		// this.lang is handled by JSONP callback
 		this.selfUpdate = {
 			callback: null,
 			interval: 60 * 1000
@@ -78,6 +85,8 @@
 		this.fetchGraphs();
 
 		this.animateUptime();
+
+		return this;
 	};
 
 	/*
@@ -302,7 +311,7 @@
 	ShipJS.prototype.fetchUptime = function(format)
 	{
 		var uptime = ++ els.uptime.dataset.raw,
-			replacements = {
+			replace = {
 				'@s': ('00' + Math.floor(uptime % 60)).slice(-2),
 				'@m': ('00' + Math.floor((uptime / 60) % 60)).slice(-2),
 				'@h': Math.floor((uptime / 3600) % 24),
@@ -310,20 +319,47 @@
 				'@M': Math.round(uptime / 60),
 				'@H': (uptime / 3600).toFixed(1),
 				'@D': (uptime / 86400).toFixed(2),
-				'_m': 'm',
-				'_h': 'h',
-				'_d': 'd',
-				'_M': 'm',
-				'_H': 'h',
-				'_D': 'd',
+				'_m': this.lang.ship.time.minute.substring(0, 1),
+				'_h': this.lang.ship.time.hour.substring(0, 1),
+				'_d': this.lang.ship.time.day.substring(0, 1),
+				'_M': this.lang.ship.time.minute.substring(0, 1),
+				'_H': this.lang.ship.time.hour.substring(0, 1),
+				'_D': this.lang.ship.time.day.substring(0, 1),
 			},
 			text = format;
 
-		for (var token in replacements) {
-			text = text.replace(new RegExp(token, 'g'), replacements[token]);
+		for (var token in replace) {
+			text = text.replace(new RegExp(token, 'g'), replace[token]);
 		}
 
 		return text;
+	};
+
+	/*
+	 * Gets a string in the language file by
+	 */
+	ShipJS.prototype.langChoice = function(key, count, replace)
+	{
+		if (!this.lang) return false;
+
+		count = count || 0;
+		replace = replace || {};
+
+		var halves = key.split('|').map(function(value) {
+			for (var token in replace) {
+				value = value.replace(new RegExp(token, 'g'), replace[token]);
+			}
+		});
+
+		return count == 1 ? halves[0] : halves[1];
+	};
+
+	/*
+	 * Register localization strings.
+	 */
+	ShipJS.prototype.registerLang = function(data)
+	{
+		this.lang = data;
 	};
 
 	/*
@@ -364,11 +400,7 @@
 	 * Binds the ShipJS object to the page.
 	 */
 	if (typeof window == 'object') {
-		window.ShipJS = ShipJS;
+		window.ShipJS = new ShipJS();
 	}
 
 })();
-
-window.addEventListener('load', function() {
-	window.ShipJSInstance = new ShipJS();
-});

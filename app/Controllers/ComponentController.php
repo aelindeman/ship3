@@ -184,6 +184,23 @@ class ComponentController extends Controller
 	}
 
 	/**
+	 * Registers components but does not activate them.
+	 * @return Collection names of components registered
+	 */
+	public function registerComponents()
+	{
+		if (!$this->registered->isEmpty()) {
+			return $this->registered;
+		}
+
+		foreach ($this->listComponents() as $path => $class) {
+			$this->registerComponent($class, $path);
+		}
+
+		return $this->registered;
+	}
+
+	/**
 	 * Lists all installed components.
 	 * @return Collection Collection of installed components.
 	 */
