@@ -80,7 +80,7 @@
 		this.animateUptime();
 	};
 
-	/*	
+	/*
 	 * Animates graphs.
 	 */
 	ShipJS.prototype.animateGraph = function(data)
@@ -113,10 +113,10 @@
 	 */
 	ShipJS.prototype.animateUptime = function()
 	{
+		var context = this;
 		clearTimeout(this.uptimeAnimation.callback);
 		this.uptimeAnimation.callback = setInterval(function() {
-			var set = els.uptime.dataset.format;
-			els.uptime.innerHTML = set;
+			els.uptime.innerHTML = context.fetchUptime(els.uptime.dataset.format);
 		}, this.uptimeAnimation.interval);
 	};
 
@@ -294,6 +294,36 @@
 		});
 
 		xhr.send();
+	};
+
+	/*
+	 * Renders uptime for a given format.
+	 */
+	ShipJS.prototype.fetchUptime = function(format)
+	{
+		var uptime = ++ els.uptime.dataset.raw,
+			replacements = {
+				'@s': ('00' + Math.floor(uptime % 60)).slice(-2),
+				'@m': ('00' + Math.floor((uptime / 60) % 60)).slice(-2),
+				'@h': Math.floor((uptime / 3600) % 24),
+				'@d': Math.floor(uptime / 86400),
+				'@M': Math.round(uptime / 60),
+				'@H': (uptime / 3600).toFixed(1),
+				'@D': (uptime / 86400).toFixed(2),
+				'_m': 'm',
+				'_h': 'h',
+				'_d': 'd',
+				'_M': 'm',
+				'_H': 'h',
+				'_D': 'd',
+			},
+			text = format;
+
+		for (var token in replacements) {
+			text = text.replace(new RegExp(token, 'g'), replacements[token]);
+		}
+
+		return text;
 	};
 
 	/*
