@@ -7,14 +7,14 @@
 		<div class="field">
 			<span class="label">@lang('NetAddress::component.browser')</span>
 			<span class="value">
-				<var data-units="ip" data-key="NetAddress.browser">{{ $browser }}</var>
+				<var data-units="ip" data-key="NetAddress.browser">{{ $browser or '&mdash;' }}</var>
 			</span>
 		</div>
 
 		<div class="field">
 			<span class="label">@lang('NetAddress::component.local')</span>
 			<span class="value">
-				<var data-units="ip" data-key="NetAddress.internal">{{ $local }}</var>
+				<var data-units="ip" data-key="NetAddress.internal">{{ $local or '&mdash;' }}</var>
 			</span>
 		</div>
 
