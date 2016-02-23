@@ -58,7 +58,7 @@
 @section ('scripts')
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist.min.js"></script>
 <script type="text/javascript" src="{{ url('ship.min.js') }}"></script>
-<script type="text/javascript" src="{{ url('lang.min.js') }}"></script>
+<script type="text/javascript" src="{{ url('lang') }}"></script>
 @endsection
 
 @section ('styles')
