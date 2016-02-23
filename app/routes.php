@@ -146,7 +146,7 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 });
 
 // Language files for Javascript
-$app->get('/lang.min.js', function() use ($app) {
+$app->get('/lang', function() use ($app) {
 	try {
 		$registered = app(ComponentController::class)->registerComponents();
 
