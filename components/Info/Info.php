@@ -42,15 +42,15 @@ class Info extends Component
 			'@M' => $totalMins,
 			'@H' => $totalHours,
 			'@D' => $totalDays,
-			'_m' => substr(app('translator')->choice('minute', $mins), 0, 1),
-			'_h' => substr(app('translator')->choice('hour', $hours), 0, 1),
-			'_d' => substr(app('translator')->choice('day', $days), 0, 1),
-			'_M' => substr(app('translator')->choice('minute', $totalMins), 0, 1),
-			'_H' => substr(app('translator')->choice('hour', $totalHours), 0, 1),
-			'_D' => substr(app('translator')->choice('day', $totalDays), 0, 1)
+			'_m' => substr(app('translator')->choice('ship.time.minute', $mins), 0, 1),
+			'_h' => substr(app('translator')->choice('ship.time.hour', $hours), 0, 1),
+			'_d' => substr(app('translator')->choice('ship.time.day', $days), 0, 1),
+			'_M' => substr(app('translator')->choice('ship.time.minute', $totalMins), 0, 1),
+			'_H' => substr(app('translator')->choice('ship.time.hour', $totalHours), 0, 1),
+			'_D' => substr(app('translator')->choice('ship.time.day', $totalDays), 0, 1)
 		];
 
-		$format = config('Info::config.uptime.format', '@d_d @h:@m:@s');
+		$format = config('components.Info.uptime.format', '@d_d @h:@m:@s');
 		$formatted = strtr($format, $dict);
 
 		return array_merge($input, [

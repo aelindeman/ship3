@@ -17,7 +17,7 @@ return [
 		/*
 		 * Uptime format
 		 */
-		'format' => env('COMPONENT_INFO_UPTIME_FORMAT', '@d @h:@m:@s'),
+		'format' => env('COMPONENT_INFO_UPTIME_FORMAT', '@d_d @h:@m:@s'),
 
 	]
 
