@@ -2,6 +2,8 @@
 
 // Components grid
 .grid { .clearfix(); }
+
+// Components
 .component {
 	&:not(:last-of-type) { margin-bottom: 1em; }
 	@media (min-width: @screen-md) {
@@ -47,53 +49,113 @@
 		margin: 0;
 		padding: 0;
 	}
-	.field {
-		display: block;
-		.clearfix();
-		&:not(:last-of-type) { margin: 0 0 0.25em 0; }
-		.label {
-			var { font-style: normal; }
-			.icon {
-				background-color: fade(@theme-gray, 25%);
-				border-radius: 0.125rem;
-				display: block;
-				float: left;
-				height: 0.5rem;
-				width: 0.5rem;
-				margin-top: 0.375rem;
-				margin-right: 0.25rem;
-				&.spacer { background-color: transparent; }
-			}
-			&.mono {
-				font-family: @font-mono;
-				font-size: 0.875em;
-				line-height: inherit;
-			}
+}
+
+// Field legends
+.field {
+	display: block;
+	.clearfix();
+	&:not(:last-of-type) { margin: 0 0 0.25em 0; }
+	.label {
+		var { font-style: normal; }
+		.icon {
+			background-color: fade(@theme-gray, 25%);
+			border-radius: 0.125rem;
+			display: block;
+			float: left;
+			height: 0.5rem;
+			width: 0.5rem;
+			margin-top: 0.375rem;
+			margin-right: 0.25rem;
+			&.spacer { background-color: transparent; }
 		}
-		.value {
-			float: right;
-			clear: right;
-			font-weight: 600;
-			min-width: 3em;
-			margin-left: 0.5em;
-			text-align: right;
-			&:only-child { float: none; }
-			span { font-weight: 300; }
-			var { font: inherit; }
-			var + var { margin-left: 0.25em; }
-			var.detail {
-				color: @theme-gray;
-				margin-left: 0;
-			}
-		}
-		.meter {
-			float: right;
-			width: 50%;
-		}
-		&.overview .meter {
-			margin-bottom: 0.25em;
-			margin-top: 0.25em;
-			width: 100%;
+		&.mono {
+			font-family: @font-mono;
+			font-size: 0.875em;
+			line-height: inherit;
 		}
 	}
+	.value {
+		float: right;
+		clear: right;
+		font-weight: 600;
+		min-width: 3em;
+		margin-left: 0.5em;
+		text-align: right;
+		&:only-child { float: none; }
+		span { font-weight: 300; }
+		var { font: inherit; }
+		var + var { margin-left: 0.25em; }
+		var.detail {
+			color: @theme-gray;
+			margin-left: 0;
+		}
+	}
+	.meter {
+		float: right;
+		width: 50%;
+	}
+	&.overview .meter {
+		margin-bottom: 0.25em;
+		margin-top: 0.25em;
+		width: 100%;
+	}
 }
+
+// Meter bars
+.meter {
+	background-color: fade(@theme-gray, 25%);
+	border-radius: 0.25em;
+	display: inline-block;
+	height: 0.25em;
+	line-height: inherit;
+	margin-top: 0.5em;
+	overflow: hidden;
+	.series {
+		background-color: #7aa5d2;
+		float: left;
+		height: 100%;
+		transition: width 500ms ease;
+		&:last-of-type {
+			border-top-right-radius: 0.25em;
+			border-bottom-right-radius: 0.25em;
+		}
+	}
+	&.emer .series:only-of-type { background-color: #ff5722; }
+	&.warn .series:only-of-type { background-color: #ffb072; }
+}
+
+// Graphs
+.graph {
+	height: 8em;
+	margin-bottom: 0.5em;
+	.ct-label {
+		color: fade(@theme-gray, 75%);
+		font-size: 0.75em;
+	}
+	.ct-line {
+		stroke-width: 0.125em;
+		stroke-linejoin: round;
+	}
+	.ct-series-a .ct-line { stroke: #7aa5d2; }
+	.ct-series-b .ct-line { stroke: #b4cd93; }
+}
+
+// Meter, graph, and field label series colors
+.theme-colors(@a, @b) {
+	.meter .series.a,
+	.field .label .icon.series-a {
+		background-color: @a;
+	}
+	.meter .series.b,
+	.field .label .icon.series-b {
+		background-color: @b;
+	}
+	.graph .ct-series-a .ct-line { stroke: @a; }
+	.graph .ct-series-b .ct-line { stroke: @b; }
+}
+
+.theme-red { .theme-colors(@theme-red, @theme-red-b); }
+.theme-green { .theme-colors(@theme-green, @theme-green-b); }
+.theme-blue { .theme-colors(@theme-blue-b, @theme-blue); }
+.theme-purple { .theme-colors(@theme-purple, @theme-purple-b); }

@@ -1,9 +1,14 @@
 @import (once) 'variables.less';
-@import (once) 'generic.less';
-
 @import (once) 'components.less';
-@import (once) 'elements.less';
-@import (once) 'color-schemes.less';
+
+// General element styles
+a, a:visited {
+	color: @theme-blue;
+	text-decoration: none;
+	&:hover {
+		text-decoration: underline;
+	}
+}
 
 // Page
 html {
@@ -62,8 +67,13 @@ main > header {
 			float: left;
 		}
 	}
+	aside {
+		color: @theme-gray;
+		var { font: inherit; font-weight: 600; }
+	}
 	nav {
 		margin-top: 0.5em;
+		.clearfix();
 		@media (min-width: @screen-md) {
 			float: right;
 			margin-top: 0;
@@ -72,13 +82,25 @@ main > header {
 			list-style-type: none;
 			margin: 0;
 			padding: 0;
+			@media (min-width: @screen-md) {
+				float: right;
+				.clearfix();
+			}
 			li {
 				display: inline-block;
-				line-height: inherit;
+				line-height: 2em;
 				margin: 0.25em 0;
-				&:not(:last-of-type) { margin-right: 1em; }
+				vertical-align: middle;
+				&.separator { margin-right: 1em; }
+				&.break {
+					display: block;
+					margin-right: 0;
+				}
 				@media (min-width: @screen-md) {
+					display: block;
+					float: left;
 					margin: 0;
+					&:not(:last-of-type) { margin-right: 1em; }
 					&.separator {
 						border-right: 0.0625em solid @theme-gray;
 						padding-right: 1em;
@@ -100,9 +122,7 @@ main > header {
 			}
 		}
 		@media (max-width: (@screen-md - 0.1px)) {
-			label {
-				.sr-only();
-			}
+			label { .sr-only(); }
 		}
 		select {
 			-webkit-appearance: none;
@@ -120,12 +140,14 @@ main > header {
 			border: 0.125rem solid @theme-blue;
 			border-radius: 0.25em;
 			box-sizing: border-box;
+			display: inline-block;
 			font-size: 0.75em;
 			font-weight: 400;
 			line-height: 1;
 			margin: 0;
 			padding: 0.5em 1em;
 			transition: background-color 0.5s ease, color 0.5s ease;
+			vertical-align: niddle;
 			&:hover {
 				background-color: @theme-blue;
 				color: #fff;

@@ -1,10 +1,10 @@
-<article id="LoadAverage" class="component">
+<article id="LoadAverage" class="component theme-blue">
 	<header>
 		<h2><span>@lang('LoadAverage::component.header')</span></h2>
 	</header>
 	<div data-graph="LoadAverage" data-graph-yaxis-units="staticTwoDecimal" class="graph"></div>
 	<section>
-	
+
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('LoadAverage::component.load')</span>
 			<span class="value">
