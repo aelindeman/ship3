@@ -27,7 +27,7 @@
 				overflow: hidden;
 				> span:only-of-type { position: relative; }
 				> span:only-of-type:after {
-					border-bottom: 0.09375em solid fade(@theme-gray, 25%);
+					border-bottom: 0.09375em solid fade(@gray, 25%);
 					content: '';
 					left: 100%;
 					margin-left: 0.5em;
@@ -59,7 +59,7 @@
 	.label {
 		var { font-style: normal; }
 		.icon {
-			background-color: fade(@theme-gray, 25%);
+			background-color: fade(@gray, 25%);
 			border-radius: 0.125rem;
 			display: block;
 			float: left;
@@ -87,7 +87,7 @@
 		var { font: inherit; }
 		var + var { margin-left: 0.25em; }
 		var.detail {
-			color: @theme-gray;
+			color: @gray;
 			margin-left: 0;
 		}
 	}
@@ -104,7 +104,7 @@
 
 // Meter bars
 .meter {
-	background-color: fade(@theme-gray, 25%);
+	background-color: fade(@gray, 25%);
 	border-radius: 0.25em;
 	display: inline-block;
 	height: 0.25em;
@@ -112,7 +112,7 @@
 	margin-top: 0.5em;
 	overflow: hidden;
 	.series {
-		background-color: #7aa5d2;
+		background-color: @theme-blue-b;
 		float: left;
 		height: 100%;
 		transition: width 500ms ease;
@@ -121,8 +121,8 @@
 			border-bottom-right-radius: 0.25em;
 		}
 	}
-	&.emer .series:only-of-type { background-color: #ff5722; }
-	&.warn .series:only-of-type { background-color: #ffb072; }
+	&.emer .series:only-of-type { background-color: @theme-red; }
+	&.warn .series:only-of-type { background-color: @theme-red-b; }
 }
 
 // Graphs
@@ -130,15 +130,13 @@
 	height: 8em;
 	margin-bottom: 0.5em;
 	.ct-label {
-		color: fade(@theme-gray, 75%);
+		color: fade(@gray, 75%);
 		font-size: 0.75em;
 	}
 	.ct-line {
 		stroke-width: 0.125em;
 		stroke-linejoin: round;
 	}
-	.ct-series-a .ct-line { stroke: #7aa5d2; }
-	.ct-series-b .ct-line { stroke: #b4cd93; }
 }
 
 // Meter, graph, and field label series colors

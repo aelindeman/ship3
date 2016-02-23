@@ -17,7 +17,7 @@
 				<div class="input-container">
 					<label class="label-before" for="time-period">@lang('ship.header.toolbar.time-period')</label>
 					<select id="time-period" class="input">
-@foreach ([15, 30, 45, 60] as $m)
+@foreach ([15, 30, 60] as $m)
 						<option value="{{ $m }}M"{{ config('app.graph-width') == $m.'M' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $m, 'units' => app('translator')->choice('ship.time.minute', $m)])</option>
 @endforeach
 @foreach ([2, 3, 6, 12, 24] as $h)

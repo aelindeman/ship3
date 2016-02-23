@@ -52,6 +52,8 @@ return [
 		'day'    => 'jour|jours'
 	],
 
+	'loading' => 'Chargement...',
+
 	'footer' => [
 		'slogan' => 'Alimenté par Ship'
 	]

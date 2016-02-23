@@ -14,19 +14,19 @@ a, a:visited {
 html {
 	font: normal 300 1em/1.25 @font-sans;
 	body {
-		background-color: #eee;
-		color: #393e46;
+		background-color: @light;
+		color: @dark;
 		min-width: 13em;
 		padding: 1em;
 		transition: background-color @transition, color @transition;
 	}
 	&.dark-mode body {
-		background-color: #000;
-		color: #eee;
+		background-color: @black;
+		color: @light;
 	}
 	&:not([data-env^="prod"]):before {
-		background-color: fade(#393e46, 90%);
-		color: #eee;
+		background-color: fade(@dark, 87.5%);
+		color: @light;
 		content: attr(data-env);
 		font-size: 0.75em;
 		font-weight: 600;
@@ -68,7 +68,7 @@ main > header {
 		}
 	}
 	aside {
-		color: @theme-gray;
+		color: @gray;
 		var { font: inherit; font-weight: 600; }
 	}
 	nav {
@@ -102,7 +102,7 @@ main > header {
 					margin: 0;
 					&:not(:last-of-type) { margin-right: 1em; }
 					&.separator {
-						border-right: 0.0625em solid @theme-gray;
+						border-right: 0.0625em solid @gray;
 						padding-right: 1em;
 					}
 				}
@@ -110,7 +110,7 @@ main > header {
 		}
 		.input-container {
 			.label-before, .label-after {
-				color: @theme-gray;
+				color: @gray;
 				margin: 0 0.25em;
 			}
 			.input {
@@ -142,15 +142,15 @@ main > header {
 			box-sizing: border-box;
 			display: inline-block;
 			font-size: 0.75em;
-			font-weight: 400;
+			font-weight: 300;
 			line-height: 1;
 			margin: 0;
 			padding: 0.5em 1em;
-			transition: background-color 0.5s ease, color 0.5s ease;
+			transition: background-color @transition, color @transition;
 			vertical-align: niddle;
 			&:hover {
 				background-color: @theme-blue;
-				color: #fff;
+				color: @white;
 			}
 		}
 	}
@@ -158,9 +158,9 @@ main > header {
 
 // Page footer
 main > footer {
-	border-top: 0.0625em solid fade(@theme-gray, 25%);
+	border-top: 0.0625em solid fade(@gray, 25%);
 	clear: both;
-	color: @theme-gray;
+	color: @gray;
 	margin-top: 1em;
 	padding-top: 0.5em;
 	@media (min-width: @screen-md) {
@@ -178,4 +178,50 @@ main > footer {
 		text-decoration: none;
 		&:hover { text-decoration: underline; }
 	}
+}
+
+#loading-indicator {
+	background-color: fade(@dark, 87.5%);
+	bottom: auto;
+	color: @white;
+	font-size: 0.75em;
+	font-weight: 600;
+	line-height: 1;
+	margin: 0 0 0 0.5em;
+	opacity: 1;
+	padding: 0.75em;
+	position: fixed;
+	right: 0;
+	top: 0;
+	visibility: visible;
+	z-index: 100;
+	&::before {
+		animation: spin 500ms linear infinite;
+		animation-play-state: running;
+		background-color: transparent;
+		border: 0.125em solid @white;
+		border-left-color: transparent;
+		border-top-color: transparent;
+		border-radius: 50%;
+		content: '';
+		display: block;
+		line-height: 1;
+		float: left;
+		height: 0.75em;
+		margin: 0 0.5em 0 0;
+		width: 0.75em;
+	}
+	&.status-0, &.status-4 {
+		opacity: 0;
+		transition: opacity @transition, visibility 0s linear 0.5s;
+		visibility: hidden;
+	}
+	&.status-0::before, &.status-4::before {
+		animation-play-state: paused;
+	}
+}
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
 }

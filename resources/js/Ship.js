@@ -6,8 +6,8 @@
 (function() {
 	'use strict';
 
-	var autoreload, chartistOptions, darkMode, lang,
-		selfUpdate, timePeriod, uptimeAnimation;
+	var autoreload, chartistOptions, darkMode, drawCallbacks, lang,
+		loadingIndicatorText, selfUpdate, timePeriod, uptimeAnimation;
 
 	/*
 	 * Class constructor
@@ -26,6 +26,7 @@
 	var els = {
 		html: document.documentElement,
 		autoreloadToggle: document.getElementById('autoreload-toggle'),
+		loadingIndicator: document.getElementById('loading-indicator'),
 		timePeriod: document.getElementById('time-period'),
 		themeToggle: document.getElementById('theme-toggle'),
 		uptime: document.getElementById('uptime')
@@ -69,7 +70,12 @@
 			width: '100%'
 		};
 		this.darkMode = els.html.className.indexOf('dark-mode') > -1;
+		this.drawCallbacks = {
+			drawComponents: false,
+			drawGraphs: false
+		};
 		// this.lang is handled by JSONP callback
+		this.loadingIndicatorText = els.loadingIndicator.innerHTML;
 		this.selfUpdate = {
 			callback: null,
 			interval: 60 * 1000
@@ -189,9 +195,26 @@
 	};
 
 	/*
+	 * Callback fired when drawComponents and drawGraphs complete.
+	 */
+	ShipJS.prototype.drawCallback = function(caller, context)
+	{
+		context.drawCallbacks[caller] = true;
+
+		var done = Object.keys(context.drawCallbacks)
+			.reduce(function(prev, curr) {
+				return context.drawCallbacks[prev] & context.drawCallbacks[curr];
+			});
+
+		if (done) {
+			context.setLoadingIndicator(null, 0);
+		}
+	};
+
+	/*
 	 * Draws components with a fresh set of data.
 	 */
-	ShipJS.prototype.drawComponents = function(data)
+	ShipJS.prototype.drawComponents = function(data, onComplete)
 	{
 		var components = document.getElementsByClassName('component'),
 			c = components.length;
@@ -199,12 +222,14 @@
 			var component = components[c];
 
 		}
+
+		onComplete('drawComponents', this);
 	};
 
 	/*
 	 * Draws graphs with Chartist with a set of data.
 	 */
-	ShipJS.prototype.drawGraphs = function(data)
+	ShipJS.prototype.drawGraphs = function(data, onComplete)
 	{
 		var context = this,
 			graphs = document.getElementsByClassName('graph'),
@@ -259,6 +284,8 @@
 					.on('draw', context.animateGraph);
 			}
 		}
+
+		onComplete('drawGraphs', this);
 	};
 
 	/*
@@ -269,14 +296,17 @@
 		var context = this,
 			xhr = new XMLHttpRequest();
 
+		context.drawCallbacks.drawComponents = false;
+
 		xhr.open('GET', this.createQueryString('/json', {
 			period: 'PT' + this.timePeriod
 		}));
 
 		xhr.addEventListener('readystatechange', function(event) {
+			context.setLoadingIndicator(context.lang.ship.loading, xhr.readyState);
 			if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE) {
 				var data = JSON.parse(xhr.responseText);
-				context.drawComponents(data);
+				context.drawComponents(data, context.drawCallback);
 			}
 		});
 
@@ -291,14 +321,17 @@
 		var context = this,
 			xhr = new XMLHttpRequest();
 
+		context.drawCallbacks.drawGraphs = false;
+
 		xhr.open('GET', this.createQueryString('/json/graph', {
 			period: 'PT' + this.timePeriod
 		}));
 
 		xhr.addEventListener('readystatechange', function(event) {
+			context.setLoadingIndicator(context.lang.ship.loading, xhr.readyState);
 			if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE) {
 				var data = JSON.parse(xhr.responseText);
-				context.drawGraphs(data);
+				context.drawGraphs(data, context.drawCallback);
 			}
 		});
 
@@ -360,6 +393,15 @@
 	ShipJS.prototype.registerLang = function(data)
 	{
 		this.lang = data;
+	};
+
+	/*
+	 * Sets text and class on the loading indicator.
+	 */
+	ShipJS.prototype.setLoadingIndicator = function(text, status)
+	{
+		els.loadingIndicator.innerHTML = (text || this.loadingIndicatorText);
+		els.loadingIndicator.className = status ? 'status-' + status : 'status-0';
 	};
 
 	/*

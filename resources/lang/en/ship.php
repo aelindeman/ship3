@@ -55,6 +55,8 @@ return [
 		'year'   => 'year|years'
 	],
 
+	'loading' => 'Loading...',
+
 	'footer' => [
 		'slogan' => 'Powered by Ship'
 	],
