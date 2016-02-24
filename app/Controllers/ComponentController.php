@@ -116,11 +116,9 @@ class ComponentController extends Controller
 	 * Returns a collection of data usable by Chartist
 	 * @param $period int CarbonInterval-compatible time period, relative
 	 *   to the current time, to specify how far back to fetch data.
-	 * @param $limit int Effectively splices the returned data by limiting only
-	 *   $limit many records.
 	 * @return Collection
 	 */
-	public function getGraphData($period = null, $limit = null)
+	public function getGraphData($period = null)
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
 			throw new \RuntimeException('No components registed');
@@ -128,9 +126,9 @@ class ComponentController extends Controller
 
 		$data = $this->components->filter(function($component) {
 			return $component instanceOf Graphable;
-		})->map(function($component) use ($period, $limit) {
+		})->map(function($component) use ($period) {
 			$component->run();
-			return $component->series($period, $limit);
+			return $component->series($period);
 		});
 
 		if ($data->isEmpty()) {

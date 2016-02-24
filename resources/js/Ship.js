@@ -217,7 +217,6 @@
 				return context.drawCallbacks[prev] & context.drawCallbacks[curr];
 			});
 
-		console.log([caller, context.drawCallbacks]);
 		if (done) {
 			context.setLoadingIndicator(context.tr('ship.done'), false);
 		}

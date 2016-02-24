@@ -45,101 +45,10 @@ $app->get('/', function() use ($app) {
 
 // JSON(P)
 $app->group(['prefix' => 'json'], function() use ($app) {
-
-	// Data for all components
-	$app->get('', function() use ($app) {
-		try {
-			$cc = app(ComponentController::class)->run();
-
-			if ($app->request->input('cache') == 'no') {
-				$cc->flush()->run();
-			}
-
-			// sort by order, then remove the order key
-			$data = $cc->getData()->sortBy('order')->map(function($e) {
-				unset($e['order']);
-				return $e;
-			});
-			$response = response()->json($data);
-		} catch (\Exception $e) {
-			return response()->json(['error' => $e->getMessage()], 500);
-		}
-
-		return addJsonCallbackOrFail($response);
-	});
-
-	// Data for a specific component
-	$app->get('component/{component}', function($component) use ($app) {
-		try {
-			$cc = app(ComponentController::class)->run($component);
-
-			if ($app->request->input('cache') == 'no') {
-				$cc->flush()->runOne($component);
-			}
-
-			$data = collect($cc->getData()->get($component))->except('order');
-			$response = response()->json($data);
-		} catch (ComponentNotFoundException $e) {
-			return response()->json(['error' => $e->getMessage()], 404);
-		} catch (\Exception $e) {
-			return response()->json(['error' => $e->getMessage()], 500);
-		}
-
-		return addJsonCallbackOrFail($response);
-	});
-
-	// Graph data for all components
-	$app->get('graph', function() use ($app) {
-		try {
-			$cc = app(ComponentController::class)->run();
-
-			if ($app->request->input('cache') == 'no') {
-				$cc->flush()->run();
-			}
-
-			$period = $app->request->input('period') ?
-				new DateInterval($app->request->input('period')) :
-				new DateInterval('PT'.config('app.graph-width'));
-
-			$limit = $app->request->input('limit');
-
-			$data = $cc->getGraphData($period, $limit);
-			$response = response()->json($data);
-		} catch (\Exception $e) {
-			return response()->json(['error' => $e->getMessage()], 500);
-		}
-
-		return addJsonCallbackOrFail($response);
-	});
-
-	// Graph data for a specific component
-	$app->get('component/{component}/graph', function($component) use ($app) {
-		try {
-			$cc = app(ComponentController::class)->run($component);
-
-			if ($app->request->input('cache') == 'no') {
-				$cc->flush()->run($component);
-			}
-
-			$period = $app->request->input('period') ?
-				new DateInterval($app->request->input('period')) :
-				new DateInterval('PT'.config('app.graph-width'));
-
-			$limit = $app->request->input('limit');
-
-			$data = $cc->getGraphData($period, $limit)->get($component);
-			$response = response()->json($data);
-		} catch (ComponentNotFoundException $e) {
-			return response()->json(['error' => $e->getMessage()], 404);
-		} catch (\DomainException $e) {
-			return response()->json(['error' => $e->getMessage()], 400);
-		} catch (\Exception $e) {
-			return response()->json(['error' => $e->getMessage()], 500);
-		}
-
-		return addJsonCallbackOrFail($response);
-	});
-
+	$app->get('', 'App\\Helpers\\OverviewHelper@generateJSON');
+	$app->get('{component}', 'App\\Helpers\\OverviewHelper@generateJSON');
+	$app->get('graph', 'App\\Helpers\\OverviewHelper@generateGraphJSON');
+	$app->get('component/{component}/graph', 'App\\Helpers\\OverviewHelper@generateGraphJSON');
 });
 
 // Trigger Javascript initialization (language files, configuration, etc.)
