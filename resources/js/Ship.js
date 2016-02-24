@@ -15,11 +15,11 @@
 	function ShipJS()
 	{
 		if (!window.Chartist) {
-			console.warn('Chartist is required');
+			console.error('Chartist is required');
 			return;
 		}
 
-		return this.init();
+		return this;
 	}
 
 	// keep track of some elements to reduce number of DOM interactions
@@ -35,8 +35,9 @@
 	/*
 	 * Initializes variables and functions that need to be called on load.
 	 */
-	ShipJS.prototype.init = function()
+	ShipJS.prototype.init = function(data)
 	{
+		// register default settings
 		this.autoreload = els.html.dataset.autoreload == 'on';
 		this.chartistOptions = {
 			axisX: {
@@ -71,10 +72,10 @@
 		};
 		this.darkMode = els.html.className.indexOf('dark-mode') > -1;
 		this.drawCallbacks = {
-			drawComponents: false,
-			drawGraphs: false
+			drawComponents: true,
+			drawGraphs: true
 		};
-		// this.lang is handled by JSONP callback
+		this.lang = null;
 		this.loadingIndicatorText = els.loadingIndicator.innerHTML;
 		this.selfUpdate = {
 			callback: null,
@@ -86,11 +87,21 @@
 			interval: 1000
 		};
 
+		// merge in new settings
+		if (data) {
+			for (var option in this) {
+				if (data[option]) {
+					this[option] = data[option];
+				}
+			}
+		}
+
+		// register listeners and stuff
 		this.bindButtonListeners();
 		this.bindSelfUpdate();
-		this.fetchGraphs();
 
 		this.animateUptime();
+		this.fetchGraphs();
 
 		return this;
 	};
@@ -206,8 +217,9 @@
 				return context.drawCallbacks[prev] & context.drawCallbacks[curr];
 			});
 
+		console.log([caller, context.drawCallbacks]);
 		if (done) {
-			context.setLoadingIndicator(null, 0);
+			context.setLoadingIndicator(context.tr('ship.done'), false);
 		}
 	};
 
@@ -220,7 +232,6 @@
 			c = components.length;
 		while (c --) {
 			var component = components[c];
-
 		}
 
 		onComplete('drawComponents', this);
@@ -303,13 +314,13 @@
 		}));
 
 		xhr.addEventListener('readystatechange', function(event) {
-			context.setLoadingIndicator(context.lang.ship.loading, xhr.readyState);
 			if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE) {
 				var data = JSON.parse(xhr.responseText);
 				context.drawComponents(data, context.drawCallback);
 			}
 		});
 
+		context.setLoadingIndicator(context.tr('ship.loading'), xhr.readyState);
 		xhr.send();
 	};
 
@@ -328,13 +339,13 @@
 		}));
 
 		xhr.addEventListener('readystatechange', function(event) {
-			context.setLoadingIndicator(context.lang.ship.loading, xhr.readyState);
 			if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE) {
 				var data = JSON.parse(xhr.responseText);
 				context.drawGraphs(data, context.drawCallback);
 			}
 		});
 
+		context.setLoadingIndicator(context.tr('ship.loading'), xhr.readyState);
 		xhr.send();
 	};
 
@@ -343,7 +354,8 @@
 	 */
 	ShipJS.prototype.fetchUptime = function(format)
 	{
-		var uptime = ++ els.uptime.dataset.raw,
+		var context = this,
+			uptime = ++ els.uptime.dataset.raw,
 			replace = {
 				'@s': ('00' + Math.floor(uptime % 60)).slice(-2),
 				'@m': ('00' + Math.floor((uptime / 60) % 60)).slice(-2),
@@ -352,12 +364,12 @@
 				'@M': Math.round(uptime / 60),
 				'@H': (uptime / 3600).toFixed(1),
 				'@D': (uptime / 86400).toFixed(2),
-				'_m': this.lang.ship.time.minute.substring(0, 1),
-				'_h': this.lang.ship.time.hour.substring(0, 1),
-				'_d': this.lang.ship.time.day.substring(0, 1),
-				'_M': this.lang.ship.time.minute.substring(0, 1),
-				'_H': this.lang.ship.time.hour.substring(0, 1),
-				'_D': this.lang.ship.time.day.substring(0, 1),
+				'_m': context.tr('ship.time.minute').substring(0, 1),
+				'_h': context.tr('ship.time.hour').substring(0, 1),
+				'_d': context.tr('ship.time.day').substring(0, 1),
+				'_M': context.tr('ship.time.minute').substring(0, 1),
+				'_H': context.tr('ship.time.hour').substring(0, 1),
+				'_D': context.tr('ship.time.day').substring(0, 1),
 			},
 			text = format;
 
@@ -385,14 +397,6 @@
 		});
 
 		return count == 1 ? halves[0] : halves[1];
-	};
-
-	/*
-	 * Register localization strings.
-	 */
-	ShipJS.prototype.registerLang = function(data)
-	{
-		this.lang = data;
 	};
 
 	/*
@@ -436,6 +440,22 @@
 		}
 		var labels = target.dataset.labels.split('|');
 		target.innerHTML = labels[to ? 1 : 0];
+	};
+
+	/*
+	 * Safely gets a translation key.
+	 */
+	ShipJS.prototype.tr = function(key, backup)
+	{
+		if (this.lang) {
+			return key.split('.').reduce(function(prev, curr) {
+				return prev ? prev[curr] : undefined;
+			}, this.lang || self);
+		} else if (backup) {
+			return backup;
+		} else {
+			return key;
+		}
 	};
 
 	/*

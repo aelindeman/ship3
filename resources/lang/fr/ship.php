@@ -53,6 +53,7 @@ return [
 	],
 
 	'loading' => 'Chargement...',
+	'done' => 'Fini',
 
 	'footer' => [
 		'slogan' => 'Alimenté par Ship'

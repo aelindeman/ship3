@@ -1,10 +1,7 @@
 <?php
 
-namespace App;
 use App\Controllers\ComponentController;
 use App\Exceptions\ComponentNotFoundException;
-
-use DateInterval;
 
 /**
  * Quick helper function for adding JSONP/callback support to responses.
@@ -145,30 +142,8 @@ $app->group(['prefix' => 'json'], function() use ($app) {
 
 });
 
-// Language files for Javascript
-$app->get('/lang', function() use ($app) {
-	try {
-		$registered = app(ComponentController::class)->registerComponents();
-
-		$lang = collect();
-		$lang->put('ship', $app->translator->get('ship'));
-
-		foreach ($registered as $class => $path) {
-			$name = app(ComponentController::class)->getComponentName($class);
-			if ($app->translator->has($name.'::component')) {
-				$lang->put($name, $app->translator->get($name.'::component'));
-			}
-		}
-
-		return response()->json($lang)
-			->setCallback('ShipJS.registerLang')
-			->withHeaders([
-				'Cache-Control' => 'public, max-age=86400',
-			]);
-	} catch (\Exception $e) {
-		return response()->json(['error' => $e->getMessage()], 500);
-	}
-});
+// Trigger Javascript initialization (language files, configuration, etc.)
+$app->get('/init', 'App\\Helpers\\OverviewHelper@initJS');
 
 // Version number
 $app->get('/version', function() use ($app) {

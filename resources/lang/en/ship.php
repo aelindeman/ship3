@@ -56,6 +56,7 @@ return [
 	],
 
 	'loading' => 'Loading...',
+	'done' => 'Done',
 
 	'footer' => [
 		'slogan' => 'Powered by Ship'
