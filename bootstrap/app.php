@@ -23,6 +23,7 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
+$app->configure('ship');
 // $app->withFacades();
 // $app->withEloquent();
 

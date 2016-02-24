@@ -1,9 +1,9 @@
 @extends ('layouts.master')
-@section ('title', config('app.title', app('translator')->get('ship.app')))
+@section ('title', config('ship.title', app('translator')->get('ship.app')))
 
 @section ('content')
 <header class="primary-header">
-	<h1>{{ config('app.title', app('translator')->get('ship.app')) }}</h1>
+	<h1>{{ config('ship.title', app('translator')->get('ship.app')) }}</h1>
 	<nav class="primary-toolbar">
 		<ul>
 @if($components->count() > 0 and $components->has('Info'))
@@ -18,15 +18,15 @@
 					<label class="label-before" for="time-period">@lang('ship.header.toolbar.time-period')</label>
 					<select id="time-period" class="input">
 @foreach ([15, 30, 60] as $m)
-						<option value="{{ $m }}M"{{ config('app.graph-width') == $m.'M' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $m, 'units' => app('translator')->choice('ship.time.minute', $m)])</option>
+						<option value="{{ $m }}M"{{ config('ship.graph-width') == $m.'M' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $m, 'units' => app('translator')->choice('ship.time.minute', $m)])</option>
 @endforeach
 @foreach ([2, 3, 6, 12, 24] as $h)
-						<option value="{{ $h }}H"{{ config('app.graph-width') == $h.'H' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $h, 'units' => app('translator')->choice('ship.time.hour', $h)])</option>
+						<option value="{{ $h }}H"{{ config('ship.graph-width') == $h.'H' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $h, 'units' => app('translator')->choice('ship.time.hour', $h)])</option>
 @endforeach
 					</select>
 				</div>
 			</li><li>
-				<button id="theme-toggle" data-labels="@lang('ship.header.toolbar.dark-mode.enable')|@lang('ship.header.toolbar.dark-mode.disable')">@lang('ship.header.toolbar.dark-mode.'.(config('app.dark-mode') ? 'disable' : 'enable'))</button>
+				<button id="theme-toggle" data-labels="@lang('ship.header.toolbar.dark-mode.enable')|@lang('ship.header.toolbar.dark-mode.disable')">@lang('ship.header.toolbar.dark-mode.'.(config('ship.dark-mode') ? 'disable' : 'enable'))</button>
 			</li>
 		</ul>
 	</nav>
@@ -62,7 +62,7 @@
 @section ('scripts')
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist.min.js"></script>
 <script type="text/javascript" src="{{ url('ship.min.js') }}"></script>
-<script type="text/javascript" src="{{ url('lang') }}"></script>
+<script type="text/javascript" src="{{ url('initjs') }}"></script>
 @endsection
 
 @section ('styles')
