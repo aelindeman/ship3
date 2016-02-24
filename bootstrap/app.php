@@ -92,8 +92,6 @@ $app->register(App\Providers\ShipHelperFunctionProvider::class);
 |
 */
 
-$app->group(['namespace' => 'App\Controllers'], function ($app) {
-    require __DIR__.'/../app/routes.php';
-});
+require __DIR__.'/../app/routes.php';
 
 return $app;
