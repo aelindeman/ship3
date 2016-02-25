@@ -8,7 +8,7 @@ interface Graphable
 {
 	/**
 	 * Returns data usable for Chartist graph series.
-	 * @param $period int DateInterval to specify how far back to fetch data.
+	 * @param $period DateInterval How far back to fetch data, relative to now.
 	 * @return array
 	 */
 	public function series(DateInterval $period = null);
