@@ -18,7 +18,7 @@ class OverviewHelper
 
 		try {
 			$cc = app(ComponentController::class)->run($component);
-			static::handlePurgeCacheRequest($cc, $component);
+			static::handleFlushCacheRequest($cc, $component);
 
 			$data = $cc->getData()->sortBy('order');
 
@@ -47,7 +47,7 @@ class OverviewHelper
 
 		try {
 			$cc = app(ComponentController::class)->run($component);
-			static::handlePurgeCacheRequest($cc, $component);
+			static::handleFlushCacheRequest($cc, $component);
 
 			$period = new DateInterval(
 				app('request')->input('period', 'PT'.config('ship.graph-width'))
@@ -72,7 +72,7 @@ class OverviewHelper
 	public static function overviewPage()
 	{
 		$cc = app(ComponentController::class)->run();
-		static::handlePurgeCacheRequest($cc);
+		static::handleFlushCacheRequest($cc);
 
 		return view('home', [
 			'components' => $cc->getData()
@@ -144,10 +144,16 @@ class OverviewHelper
 		];
 	}
 
-	protected static function handlePurgeCacheRequest(&$componentController, $component = null)
+	/**
+	 * Handle cache=no input on any request.
+	 * @param &$componentController ComponentController
+	 * @param $component
+	 * @return ComponentController
+	 */
+	protected static function handleFlushCacheRequest(&$componentController, $component = null)
 	{
-		if (app('request')->input('cache') == 'no') {
-			$componentController->flush()->run($component);
-		}
+		return (app('request')->input('cache') == 'no') ?
+			$componentController->flush()->run($component) :
+			$componentController;
 	}
 }
