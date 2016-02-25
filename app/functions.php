@@ -9,17 +9,22 @@ if (!function_exists('bytesize')) {
 	 * @param $input int Size to format, in kilobytes
 	 * @param $precision int Number of decimal places
 	 * @param $space string Separator between value and byte suffix
-	 * @param $maxiumum string Maximum
 	 * @return string Formatted size with suffix
 	 */
-	function bytesize($input, $precision = 1, $space = false)
+	function bytesize($input, $precision = null, $space = '')
 	{
-		$suffix =  ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k'];
+		$suffix = ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k'];
 		$total = count($suffix);
+
 		while ($total -- and $input > 1024) {
 			$input /= 1024;
 		}
-		return sprintf('%0.'.$precision.'f', $input).e($space).$suffix[$total];
+
+		$decimals = $precision ?
+			$precision :
+			($input < 10 ? 2 : ($input < 100 ? 1 : 0));
+
+		return round($input, $decimals).e($space).$suffix[$total];
 	}
 
 }

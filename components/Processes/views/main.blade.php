@@ -12,7 +12,7 @@
 					<var data-key="Processes.cpu.{{ $i }}.name">{{ $process['name'] }}</var>
 				</span>
 				<span class="value">
-					<var data-units="%" data-key="Processes.cpu.{{ $i }}.cpu">{{ $process['cpu'] }}%</var>
+					<var data-units="percent" data-key="Processes.cpu.{{ $i }}.cpu">{{ $process['cpu'] }}%</var>
 				</span>
 			</li>
 @endforeach
@@ -26,7 +26,7 @@
 					<var data-key="Processes.memory.{{ $i }}.name">{{ $process['name'] }}</var>
 				</span>
 				<span class="value">
-					<var data-units="%" data-key="Processes.memory.{{ $i }}.memory">{{ $process['memory'] }}%</var>
+					<var data-units="percent" data-key="Processes.memory.{{ $i }}.memory">{{ $process['memory'] }}%</var>
 				</span>
 			</li>
 @endforeach

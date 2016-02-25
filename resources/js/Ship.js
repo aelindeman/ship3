@@ -79,7 +79,7 @@
 		this.lang = null;
 		this.selfUpdate = {
 			callback: null,
-			interval: 60 * 1000
+			interval: 10 * 1000
 		};
 		this.timePeriod = els.timePeriod.value;
 		this.uptimeAnimation = {
@@ -181,10 +181,13 @@
 	{
 		var context = this;
 		clearInterval(this.selfUpdate.callback);
-		this.selfUpdate.callback = setInterval(function() {
-			context.fetchGraphs();
-			context.fetchComponents();
-		}, this.selfUpdate.interval);
+
+		if (this.autoreload) {
+			this.selfUpdate.callback = setInterval(function() {
+				context.fetchGraphs();
+				context.fetchComponents();
+			}, this.selfUpdate.interval);
+		}
 	};
 
 	/*
@@ -223,7 +226,9 @@
 	ShipJS.prototype.drawComponents = function(data, onComplete)
 	{
 		var keys = document.querySelectorAll('[data-key]'),
-			k = keys.length;
+			k = keys.length,
+			meters = document.querySelectorAll('[data-meter-series-key]'),
+			m = meters.length;
 
 		function get(key) {
 			return key.split('.').reduce(function(prev, curr) {
@@ -231,12 +236,28 @@
 			}, data || self);
 		}
 
+		// update text
 		while (k --) {
 			var el = keys[k],
-				key = el.dataset.key;
-			el.innerHTML = get(key);
+				key = el.dataset.key,
+				value = get(key),
+				units;
 
-			console.log([el, key]);
+			if (units = el.dataset.units) {
+				value = this.valueTransform(units, value);
+			}
+
+			el.innerHTML = value || '&mdash;';
+		}
+
+		// update meters
+		while (m --) {
+			var el = meters[m],
+				key = el.dataset.meterSeriesKey,
+				value = get(key);
+
+			value = this.valueTransform('percent', value);
+			el.style.width = value;
 		}
 
 		onComplete('drawComponents', this);
@@ -252,19 +273,11 @@
 			g = graphs.length;
 
 		function axisLabelInterpolate_kb(value) {
-			var sizes = ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k'],
-				unit = sizes.length;
-
-			while (unit -- && value > 1024) {
-				value /= 1024;
-			}
-
-			var decimals = value < 10 ? 2 : (value < 100 ? 1 : 0);
-			return +value.toFixed(decimals) + sizes[unit];
+			return context.valueTransform('kb', value);
 		}
 
 		function axisLabelInterpolate_kbPerSecond(value) {
-			return axisLabelInterpolate_kb(value) + '/s';
+			return context.valueTransform('kb/s', value);
 		}
 
 		function axisLabelInterpolate_staticTwoDecimal(value) {
@@ -386,25 +399,6 @@
 	};
 
 	/*
-	 * Gets a string in the language file by
-	 */
-	ShipJS.prototype.langChoice = function(key, count, replace)
-	{
-		if (!this.lang) return false;
-
-		count = count || 0;
-		replace = replace || {};
-
-		var halves = key.split('|').map(function(value) {
-			for (var token in replace) {
-				value = value.replace(new RegExp(token, 'g'), replace[token]);
-			}
-		});
-
-		return count == 1 ? halves[0] : halves[1];
-	};
-
-	/*
 	 * Sets text and class on the loading indicator.
 	 */
 	ShipJS.prototype.setLoadingIndicator = function(text, status)
@@ -467,6 +461,87 @@
 		} else {
 			return key;
 		}
+	};
+
+	/*
+	 * Gets a translation and pluralizes it based on a value.
+	 * Currently only supports basic one/many translations!
+	 */
+	ShipJS.prototype.trChoice = function(key, count, backup)
+	{
+		if (this.lang) {
+			return this.tr(key).split('|')[+(count != 1)];
+		} else if (backup) {
+			return backup.split('|')[+(count != 1)];
+		} else {
+			return key;
+		}
+	};
+
+	/*
+	 * Various value transform functions.
+	 */
+	ShipJS.prototype.valueTransform = function(which, value)
+	{
+		var context = this;
+
+		var transforms = {
+
+			hours: function(value)
+			{
+				return value + ' ' + context.trChoice('ship.time.hour', value);
+			},
+
+			kb: function(value)
+			{
+				var sizes = ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k'],
+					unit = sizes.length;
+
+				while (unit -- && value > 1024) {
+					value /= 1024;
+				}
+
+				var decimals = value < 10 ? 2 : (value < 100 ? 1 : 0);
+				return +value.toFixed(decimals) + sizes[unit];
+			},
+
+			'kb/s': function(value)
+			{
+				return this.kb(value) + '/s';
+			},
+
+			lcfirst: function(value)
+			{
+				return value.charAt(0).toLowerCase() + value.slice(1);
+			},
+
+			minutes: function(value)
+			{
+				return value + ' ' + context.trChoice('ship.time.minute', value);
+			},
+
+			percent: function(value)
+			{
+				return value + '%';
+			},
+
+			relativeDateDiff: function(value)
+			{
+				var date = Date.parse(value);
+			},
+
+			seconds: function(value)
+			{
+				return value + ' ' + context.trChoice('ship.time.second', value);
+			}
+
+		};
+
+		// return either value passed through the specified transform,
+		// or all transform functions
+		return which ? 
+			((which in transforms) ? transforms[which](value) : undefined) :
+			transforms;
 	};
 
 	/*

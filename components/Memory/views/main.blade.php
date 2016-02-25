@@ -8,7 +8,7 @@
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('Memory::component.labels.used')</span>
 			<span class="value">
-				<var data-units="%" data-key="Memory.usedPct">{{ round($used / $total * 100) }}%</var>
+				<var data-units="percent" data-key="Memory.usedPct">{{ round($used / $total * 100) }}%</var>
 				<span> of </span>
 				<var data-units="kb" data-key="Memory.total">{{ bytesize($total) }}</var>
 			</span>
