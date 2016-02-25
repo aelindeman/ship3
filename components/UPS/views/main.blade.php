@@ -6,7 +6,7 @@
 
 		<div class="field overview">
 			<span class="label">
-				<strong><var data-units="none" data-key="UPS.status">{{ ucfirst($status) }}</var></strong>
+				<strong><var data-key="UPS.status">{{ ucfirst($status) }}</var></strong>
 			</span>
 		</div>
 
@@ -44,7 +44,7 @@
 			</span>
 @if (strtotime($xonbatt) > 0 and !empty($lastxfer))
 			<span class="value">
-				<var data-units="none" data-key="UPS.lastxfer">{{ lcfirst($lastxfer) }}</var>
+				<var data-key="UPS.lastxfer">{{ lcfirst($lastxfer) }}</var>
 			</span>
 @endif
 		</div>

@@ -8,14 +8,14 @@
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('NetTraffic::component.transmit')</span>
 			<span class="value">
-				<var data-units="kB/s" data-key="NetTraffic.tx">{{ bytesize($tx) }}</var>
+				<var data-units="kb/s" data-key="NetTraffic.tx">{{ bytesize($tx) }}</var>
 			</span>
 		</div>
 
 		<div class="field">
 			<span class="label"><span class="icon series-b"></span>@lang('NetTraffic::component.recieve')</span>
 			<span class="value">
-				<var data-units="kB/s" data-key="NetTraffic.rx">{{ bytesize($rx) }}</var>
+				<var data-units="kb/s" data-key="NetTraffic.rx">{{ bytesize($rx) }}</var>
 			</span>
 		</div>
 

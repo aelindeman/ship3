@@ -8,7 +8,7 @@
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('LoadAverage::component.load')</span>
 			<span class="value">
-				<var data-units="none" data-key="LoadAverage.five">{{ sprintf('%0.2f', $five) }}</var>
+				<var data-key="LoadAverage.five">{{ sprintf('%0.2f', $five) }}</var>
 			</span>
 		</div>
 

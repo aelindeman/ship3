@@ -6,8 +6,8 @@
 (function() {
 	'use strict';
 
-	var autoreload, chartistOptions, darkMode, drawCallbacks, lang,
-		loadingIndicatorText, selfUpdate, timePeriod, uptimeAnimation;
+	var autoreload, chartistOptions, config, darkMode, drawCallbacks, lang,
+		selfUpdate, timePeriod, uptimeAnimation;
 
 	/*
 	 * Class constructor
@@ -70,13 +70,13 @@
 			showPoint: false,
 			width: '100%'
 		};
+		this.config = null;
 		this.darkMode = els.html.className.indexOf('dark-mode') > -1;
 		this.drawCallbacks = {
 			drawComponents: true,
 			drawGraphs: true
 		};
 		this.lang = null;
-		this.loadingIndicatorText = els.loadingIndicator.innerHTML;
 		this.selfUpdate = {
 			callback: null,
 			interval: 60 * 1000
@@ -87,13 +87,9 @@
 			interval: 1000
 		};
 
-		// merge in new settings
-		if (data) {
-			for (var option in this) {
-				if (data[option]) {
-					this[option] = data[option];
-				}
-			}
+		// merge in language settings
+		if (data.lang) {
+			this.lang = data.lang;
 		}
 
 		// register listeners and stuff
@@ -151,8 +147,7 @@
 	 */
 	ShipJS.prototype.bindButtonListeners = function()
 	{
-		var context = this,
-			graphTimeout;
+		var context = this;
 
 		// width setting
 		if (els.timePeriod) {
@@ -227,10 +222,21 @@
 	 */
 	ShipJS.prototype.drawComponents = function(data, onComplete)
 	{
-		var components = document.getElementsByClassName('component'),
-			c = components.length;
-		while (c --) {
-			var component = components[c];
+		var keys = document.querySelectorAll('[data-key]'),
+			k = keys.length;
+
+		function get(key) {
+			return key.split('.').reduce(function(prev, curr) {
+				return prev ? prev[curr] : undefined;
+			}, data || self);
+		}
+
+		while (k --) {
+			var el = keys[k],
+				key = el.dataset.key;
+			el.innerHTML = get(key);
+
+			console.log([el, key]);
 		}
 
 		onComplete('drawComponents', this);
@@ -403,7 +409,7 @@
 	 */
 	ShipJS.prototype.setLoadingIndicator = function(text, status)
 	{
-		els.loadingIndicator.innerHTML = (text || this.loadingIndicatorText);
+		els.loadingIndicator.innerHTML = text || this.lang.ship.loading;
 		els.loadingIndicator.className = status ? 'status-' + status : 'status-0';
 	};
 
@@ -425,6 +431,12 @@
 	ShipJS.prototype.toggleAutoreload = function()
 	{
 		this.autoreload = !this.autoreload;
+
+		if (this.autoreload) {
+			this.bindSelfUpdate();
+		} else {
+			clearInterval(this.selfUpdate.callback);
+		}
 	};
 
 	/*

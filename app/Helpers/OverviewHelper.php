@@ -9,6 +9,8 @@ class OverviewHelper
 {
 	/**
 	 * Retrieves component data and renders it as JSON.
+	 * @param $component string Retrieve data for a single component
+	 * @return Response
 	 */
 	public static function generateJSON($component = null)
 	{
@@ -16,10 +18,7 @@ class OverviewHelper
 
 		try {
 			$cc = app(ComponentController::class)->run($component);
-
-			if (app('request')->input('cache') == 'no') {
-				$cc->flush()->run($component);
-			}
+			static::handlePurgeCacheRequest($cc, $component);
 
 			$data = $cc->getData()->sortBy('order');
 
@@ -39,6 +38,8 @@ class OverviewHelper
 
 	/**
 	 * Generates graph data for components and renders it as JSON.
+	 * @param $component string Generate data for a single component
+	 * @return Response
 	 */
 	public static function generateGraphJSON($component = null)
 	{
@@ -46,17 +47,14 @@ class OverviewHelper
 
 		try {
 			$cc = app(ComponentController::class)->run($component);
-
-			if (app('request')->input('cache') == 'no') {
-				$cc->flush()->run($component);
-			}
+			static::handlePurgeCacheRequest($cc, $component);
 
 			$period = new DateInterval(
 				app('request')->input('period', 'PT'.config('ship.graph-width'))
 			);
 
 			$data = $cc->getGraphData($period);
-			
+
 			$response = $response->json($data)
 				->setCallback(app('request')->input('callback', null));
 
@@ -65,6 +63,20 @@ class OverviewHelper
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Generates the 'overview' page, displaying all components.
+	 * @return Response
+	 */
+	public static function overviewPage()
+	{
+		$cc = app(ComponentController::class)->run();
+		static::handlePurgeCacheRequest($cc);
+
+		return view('home', [
+			'components' => $cc->getData()
+		]);
 	}
 
 	/**
@@ -130,5 +142,12 @@ class OverviewHelper
 			'ship' => config('ship'),
 			'components' => config('components')
 		];
+	}
+
+	protected static function handlePurgeCacheRequest(&$componentController, $component = null)
+	{
+		if (app('request')->input('cache') == 'no') {
+			$componentController->flush()->run($component);
+		}
 	}
 }

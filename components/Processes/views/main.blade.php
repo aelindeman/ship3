@@ -9,24 +9,24 @@
 @foreach ($cpu as $i => $process)
 			<li class="field">
 				<span class="label mono">
-					<var data-units="none" data-key="Processes.cpu.{{ $i }}">{{ $process['name'] }}</var>
+					<var data-key="Processes.cpu.{{ $i }}.name">{{ $process['name'] }}</var>
 				</span>
 				<span class="value">
-					<var data-units="%" data-key="Processes.cpu.{{ $i }}">{{ $process['cpu'] }}</var>%
+					<var data-units="%" data-key="Processes.cpu.{{ $i }}.cpu">{{ $process['cpu'] }}%</var>
 				</span>
 			</li>
 @endforeach
-		</ul>	
+		</ul>
 
 		<h3>@lang('Processes::component.memory')</h3>
 		<ul class="field-list">
 @foreach ($memory as $i => $process)
 			<li class="field">
 				<span class="label mono">
-					<var data-units="none" data-key="Processes.memory.{{ $i }}">{{ $process['name'] }}</var>
+					<var data-key="Processes.memory.{{ $i }}.name">{{ $process['name'] }}</var>
 				</span>
 				<span class="value">
-					<var data-units="%" data-key="Processes.memory.{{ $i }}">{{ $process['memory'] }}%</var>
+					<var data-units="%" data-key="Processes.memory.{{ $i }}.memory">{{ $process['memory'] }}%</var>
 				</span>
 			</li>
 @endforeach

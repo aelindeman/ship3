@@ -10,7 +10,7 @@
 			<span class="value">
 				<var data-units="%" data-key="Memory.usedPct">{{ round($used / $total * 100) }}%</var>
 				<span> of </span>
-				<var data-units="kB" data-key="Memory.total">{{ bytesize($total) }}</var>
+				<var data-units="kb" data-key="Memory.total">{{ bytesize($total) }}</var>
 			</span>
 		</div>
 

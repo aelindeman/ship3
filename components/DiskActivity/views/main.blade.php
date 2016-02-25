@@ -8,14 +8,14 @@
 		<div class="field">
 			<span class="label"><span class="icon series-a"></span>@lang('DiskActivity::component.read')</span>
 			<span class="value">
-				<var data-units="kB/s" data-key="DiskActivity.read">{{ bytesize($read) }}</var>
+				<var data-units="kb/s" data-key="DiskActivity.read">{{ bytesize($read) }}</var>
 			</span>
 		</div>
 
 		<div class="field">
 			<span class="label"><span class="icon series-b"></span>@lang('DiskActivity::component.write')</span>
 			<span class="value">
-				<var data-units="kB/s" data-key="DiskActivity.write">{{ bytesize($write) }}</var>
+				<var data-units="kb/s" data-key="DiskActivity.write">{{ bytesize($write) }}</var>
 			</span>
 		</div>
 
