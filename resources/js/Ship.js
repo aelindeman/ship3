@@ -79,7 +79,7 @@
 		this.lang = null;
 		this.selfUpdate = {
 			callback: null,
-			interval: 10 * 1000
+			interval: 60 * 1000
 		};
 		this.timePeriod = els.timePeriod.value;
 		this.uptimeAnimation = {
@@ -539,7 +539,7 @@
 
 		// return either value passed through the specified transform,
 		// or all transform functions
-		return which ? 
+		return which ?
 			((which in transforms) ? transforms[which](value) : undefined) :
 			transforms;
 	};
