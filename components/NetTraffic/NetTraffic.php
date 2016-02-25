@@ -79,7 +79,7 @@ class NetTraffic extends Component implements Graphable
 				$t = ($entry->tx - $previous->tx) / 60;
 				return [
 					'x' => app('carbon')->parse($entry->time)->timestamp,
-					'y' => $t,
+					'y' => max($t, 0),
 				];
 			}
 			return null;
@@ -90,7 +90,7 @@ class NetTraffic extends Component implements Graphable
 				$r = ($entry->rx - $previous->rx) / 60;
 				return [
 					'x' => app('carbon')->parse($entry->time)->timestamp,
-					'y' => $r,
+					'y' => max($r, 0),
 				];
 			}
 			return null;

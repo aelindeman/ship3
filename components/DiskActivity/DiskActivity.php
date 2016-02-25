@@ -104,7 +104,7 @@ class DiskActivity extends Component implements Graphable
 				$r = ($entry->read - $previous->read) / 60;
 				return [
 					'x' => app('carbon')->parse($entry->time)->timestamp,
-					'y' => $r,
+					'y' => max($r, 0),
 				];
 			}
 			return null;
@@ -115,7 +115,7 @@ class DiskActivity extends Component implements Graphable
 				$w = ($entry->write - $previous->write) / 60;
 				return [
 					'x' => app('carbon')->parse($entry->time)->timestamp,
-					'y' => $w,
+					'y' => max($w, 0),
 				];
 			}
 			return null;
