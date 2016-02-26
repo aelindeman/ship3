@@ -5,7 +5,7 @@ use App\Controllers\ComponentController;
 
 use DateInterval;
 
-class OverviewHelper
+class RouteHelper
 {
 	/**
 	 * Retrieves component data and renders it as JSON.
@@ -41,7 +41,7 @@ class OverviewHelper
 	 * @param $component string Generate data for a single component
 	 * @return Response
 	 */
-	public static function generateGraphJSON($component = null)
+	public static function generateDifferenceJSON($component = null)
 	{
 		$response = response();
 
@@ -52,6 +52,39 @@ class OverviewHelper
 			$period = new DateInterval(
 				app('request')->input('period', 'PT'.config('ship.graph-width'))
 			);
+
+			$from = app('request')->input('from') ?
+				app('carbon')->parse(app('request')->input('from')) :
+				app('carbon')->now();
+
+			$data = $cc->getDifferenceData($period, $from);
+
+			$response = $response->json($data)
+				->setCallback(app('request')->input('callback', null));
+
+		} catch (\Exception $e) {
+			$response = $response->json(['error' => $e->getMessage()], 400);
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Generates graph data for components and renders it as JSON.
+	 * @param $component string Generate data for a single component
+	 * @return Response
+	 */
+	public static function generateGraphJSON($component = null)
+	{
+		$response = response();
+
+		try {
+			$cc = app(ComponentController::class)->run($component);
+			static::handleFlushCacheRequest($cc, $component);
+
+			$period = new DateInterval(app('carbon')->parse(
+				app('request')->input('period', 'PT'.config('ship.graph-width'))
+			));
 
 			$data = $cc->getGraphData($period);
 

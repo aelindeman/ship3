@@ -2,10 +2,13 @@
 
 namespace App\Controllers;
 use App\Behaviors\Cacheable;
+use App\Behaviors\Differentiable;
 use App\Behaviors\Graphable;
 use App\Exceptions\ComponentNotFoundException;
 use App\Models\Component;
 
+use DateInterval;
+use DateTime;
 use Illuminate\Filesystem\Filesystem;
 use Laravel\Lumen\Routing\Controller;
 use RecursiveDirectoryIterator;
@@ -114,11 +117,11 @@ class ComponentController extends Controller
 
 	/**
 	 * Returns a collection of data usable by Chartist
-	 * @param $period int CarbonInterval-compatible time period, relative
-	 *   to the current time, to specify how far back to fetch data.
+	 * @param $period DateInterval Time period for how far back to fetch data,
+	 *   relative to the current time.
 	 * @return Collection
 	 */
-	public function getGraphData($period = null)
+	public function getGraphData(DateInterval $period = null)
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
 			throw new \RuntimeException('No components registed');
@@ -133,6 +136,34 @@ class ComponentController extends Controller
 
 		if ($data->isEmpty()) {
 			throw new \DomainException('Component did not provide graph data');
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Calculate the difference between two data points.
+	 * @param $period DateInterval Time period for which to calculate the data
+	 *   differential, relative to either the current time or $from, if
+	 *   specified.
+	 * @param $from DateTime Time from which to calculate the differential.
+	 *   Defaults to the current time if unspecified.
+	 */
+	public function getDifferenceData(DateInterval $period, DateTime $from = null)
+	{
+		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
+			throw new \RuntimeException('No components registed');
+		}
+
+		$data = $this->components->filter(function($component) {
+			return $component instanceOf Differentiable;
+		})->map(function($component) use ($period, $from) {
+			$component->run();
+			return $component->difference($period, $from);
+		});
+
+		if ($data->isEmpty()) {
+			throw new \DomainException('Component did not provide difference data');
 		}
 
 		return $data;

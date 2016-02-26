@@ -11,19 +11,31 @@
 |
 */
 
-// Home view
-$app->get('/', 'App\\Helpers\\OverviewHelper@overviewPage');
+$app->group(['namespace' => 'App\\Helpers'], function() use ($app) {
 
-// JSON(P)
-$app->group(['prefix' => 'json'], function() use ($app) {
-	$app->get('', 'App\\Helpers\\OverviewHelper@generateJSON');
-	$app->get('component/{component}', 'App\\Helpers\\OverviewHelper@generateJSON');
-	$app->get('graph', 'App\\Helpers\\OverviewHelper@generateGraphJSON');
-	$app->get('component/{component}/graph', 'App\\Helpers\\OverviewHelper@generateGraphJSON');
+	// Home view
+	$app->get('/', 'RouteHelper@overviewPage');
+
+	// JSON(P)
+	// (Why aren't namespaces inherited?)
+	$app->group(['namespace' => 'App\\Helpers', 'prefix' => 'json'], function() use ($app) {
+
+		// All components
+		$app->get('', 'RouteHelper@generateJSON');
+		$app->get('diff', 'RouteHelper@generateDifferenceJSON');
+		$app->get('graph', 'RouteHelper@generateGraphJSON');
+
+		// Single component
+		$app->get('component/{component}', 'RouteHelper@generateJSON');
+		$app->get('component/{component}/diff', 'RouteHelper@generateDifferenceJSON');
+		$app->get('component/{component}/graph', 'RouteHelper@generateGraphJSON');
+
+	});
+
+	// Trigger Javascript initialization (language files, configuration, etc.)
+	$app->get('/init', 'RouteHelper@initJS');
+
 });
-
-// Trigger Javascript initialization (language files, configuration, etc.)
-$app->get('/init', 'App\\Helpers\\OverviewHelper@initJS');
 
 // Version number
 $app->get('/version', function() use ($app) {

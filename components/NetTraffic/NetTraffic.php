@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Components;
+use App\Behaviors\Differentiable;
 use App\Behaviors\Graphable;
 use App\Models\Component;
 
+use Carbon\Carbon;
 use DateInterval;
+use DateTime;
 
-class NetTraffic extends Component implements Graphable
+class NetTraffic extends Component
+	implements Differentiable, Graphable
 {
 	protected $table = 'nettraffic';
 	protected $fillable = [
@@ -66,7 +70,7 @@ class NetTraffic extends Component implements Graphable
 	{
 		$since = $period ?
 			app('carbon')->now()->sub($period) :
-			app('carbon')->now()->subHours(config('app.graph-width'));
+			app('carbon')->now()->subHours(config('ship.graph-width'));
 
 		$query = app('db')->table($this->table)
 			->where('time', '>=', $since)
@@ -97,5 +101,38 @@ class NetTraffic extends Component implements Graphable
 		});
 
 		return [$tx, $rx];
+	}
+
+	public function difference(DateInterval $period, DateTime $from = null)
+	{
+		if (app('db')->table($this->table)->count() < 2) {
+			throw new \RangeException('Not enough database entries to be able to run a comparison');
+		}
+
+		$start = $from ?
+			app('carbon')->parse($from) :
+			app('carbon')->now();
+
+		$end = $period ?
+			$from->sub($period) :
+			$from->subHours(config('ship.graph-width'));
+
+		$a = app('db')->table($this->table)
+			->select($this->fillable)
+			->where('time', '<=', $start)
+			->orderBy('time', 'desc')
+			->first();
+
+		$b = app('db')->table($this->table)
+			->select($this->fillable)
+			->where('time', '<=', $end)
+			->orderBy('time', 'desc')
+			->first();
+
+		$values = array_map(function($key) use ($a, $b) {
+			return $a->$key - $b->$key;
+		}, $fields);
+
+		return array_combine($this->fillable, $values);
 	}
 }
