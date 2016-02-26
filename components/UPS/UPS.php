@@ -52,7 +52,19 @@ class UPS extends Component
 			if (preg_match('/^(.*?)\s*:\s*(.*?)$/', $row, $matches)) {
 				list(, $key, $value) = $matches;
 				$key = preg_replace('/\s+/', '_', strtolower($key));
-				if ($key == 'status') $value = strtolower($value);
+
+				// transform a couple values
+				switch ($key) {
+					case 'status':
+						$value = strtolower($value);
+						break;
+					case 'xonbatt':
+						$value = $value ?
+							app('carbon')->parse($value)->diffForHumans() :
+							app('translator')->get('UPS::component.labels.no-lastxfer');
+						break;
+				}
+
 				$out[$key] = $value;
 			}
 		}

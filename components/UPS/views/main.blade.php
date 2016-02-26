@@ -40,9 +40,9 @@
 		<div class="field">
 			<span class="label">@lang('UPS::component.labels.lastxfer')</span>
 			<span class="value">
-				<var data-units="relativeDateDiff" data-key="UPS.xonbatt" title="{{ $xonbatt }}">{{ $xonbatt ? app('carbon')->parse($xonbatt)->diffForHumans() : app('translator')->get('UPS::component.labels.no-lastxfer') }}</var>
+				<var data-key="UPS.xonbatt">{{ $xonbatt }}</var>
 			</span>
-@if (strtotime($xonbatt) > 0 and !empty($lastxfer))
+@if (!empty($lastxfer))
 			<span class="value">
 				<var data-units="lcfirst" data-key="UPS.lastxfer">{{ lcfirst($lastxfer) }}</var>
 			</span>
