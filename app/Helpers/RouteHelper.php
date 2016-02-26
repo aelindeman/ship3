@@ -59,6 +59,10 @@ class RouteHelper
 
 			$data = $cc->getDifferenceData($period, $from);
 
+			if ($component) {
+				$data = $data->get($component);
+			}
+
 			$response = $response->json($data)
 				->setCallback(app('request')->input('callback', null));
 
@@ -82,11 +86,15 @@ class RouteHelper
 			$cc = app(ComponentController::class)->run($component);
 			static::handleFlushCacheRequest($cc, $component);
 
-			$period = new DateInterval(app('carbon')->parse(
+			$period = new DateInterval(
 				app('request')->input('period', 'PT'.config('ship.graph-width'))
-			));
+			);
 
 			$data = $cc->getGraphData($period);
+
+			if ($component) {
+				$data = $data->get($component);
+			}
 
 			$response = $response->json($data)
 				->setCallback(app('request')->input('callback', null));
@@ -106,6 +114,8 @@ class RouteHelper
 	{
 		$cc = app(ComponentController::class)->run();
 		static::handleFlushCacheRequest($cc);
+
+		$cc->dateInterval = 'PT'.config('ship.graph-width');
 
 		return view('home', [
 			'components' => $cc->getData()

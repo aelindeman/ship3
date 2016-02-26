@@ -154,6 +154,7 @@
 			els.timePeriod.addEventListener('change', function(event) {
 				context.timePeriod = els.timePeriod.value;
 				context.fetchGraphs();
+				context.fetchComponents();
 			});
 		}
 

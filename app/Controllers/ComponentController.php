@@ -37,15 +37,23 @@ class ComponentController extends Controller
 	protected $registered;
 
 	/*
+	 * Date interval for Differentiable components
+	 */
+	public $dateInterval;
+
+	/*
 	 * Default constructor
 	 */
 	public function __construct()
 	{
 		$this->componentsPath = base_path(
-			config('app.component-path', 'components')
+			config('ship.component-path', 'components')
 		);
 		$this->components = collect();
 		$this->registered = collect();
+
+		$this->dateInterval = app('request')->input('period',
+			'PT'.config('ship.graph-width'));
 	}
 
 	/**
@@ -181,19 +189,15 @@ class ComponentController extends Controller
 
 		// get data for each component
 		$data = $this->components->map(function($component) {
-			try {
-				return $component->run();
-			} catch (\RuntimeException $e) {
-				// component works, but did not run successfully
-				app('log')->debug('Caught '.get_class($e).' in '.get_class($component).': '.$e->getMessage());
-			} catch (\LogicException $e) {
-				// component was not configured correctly
-				app('log')->notice('Caught '.get_class($e).' in '.get_class($component).': '.$e->getMessage());
-			} catch (\Exception $e) {
-				// anything else
-				app('log')->notice('Caught '.get_class($e).' in '.get_class($component).': '.$e->getMessage());
+			$d = $component->run();
+
+			if ($component instanceOf Differentiable) {
+				$d = array_merge($d, $component->difference(
+					new DateInterval($this->dateInterval)
+				));
 			}
-			return null;
+
+			return $d;
 		});
 
 		return $data;
