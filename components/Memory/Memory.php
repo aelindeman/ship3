@@ -38,11 +38,15 @@ class Memory extends Component implements Graphable
 		}
 
 		$used = $m['MemTotal'] - $m['MemAvailable'];
+
 		return [
-			'free'   => (int)$m['MemAvailable'],
-			'used'   => (int)$used,
-			'cached' => (int)$m['Cached'],
-			'total'  => (int)$m['MemTotal']
+			'free'   => $m['MemAvailable'],
+			'freePct' => round($m['MemAvailable'] / $m['MemTotal'] * 100),
+			'used'   => $used,
+			'usedPct' => round($used / $m['MemTotal'] * 100),
+			'cached' => $m['Cached'],
+			'cachedPct' => round($m['Cached'] / $m['MemTotal'] * 100),
+			'total'  => $m['MemTotal']
 		];
 	}
 
