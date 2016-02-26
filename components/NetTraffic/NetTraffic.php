@@ -131,7 +131,7 @@ class NetTraffic extends Component
 
 		$values = array_map(function($key) use ($a, $b) {
 			return $a->$key - $b->$key;
-		}, $fields);
+		}, $this->fillable);
 
 		return array_combine($this->fillable, $values);
 	}
