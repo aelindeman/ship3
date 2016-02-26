@@ -53,6 +53,8 @@
 	<p>@lang('ship.translation-credit')</p>
 	<p>@lang('ship.footer.slogan') {{ $app->version() }} - <a href="http://ael.me/ship/">ael.me/ship</a></p>
 </footer>
+
+<div id="loading-indicator">@lang('ship.loading')</div>
 @endsection
 
 @section ('meta')

@@ -14,7 +14,6 @@
         <main>
             @yield('content')
         </main>
-        <div id="loading-indicator">@lang('ship.loading')</div>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
         @yield('scripts')
     </body>
