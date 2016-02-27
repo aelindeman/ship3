@@ -24,7 +24,7 @@ class Aptitude extends Component implements Cacheable
 	public static function fetch()
 	{
 		// use cache if it's there
-		$expires = config('Aptitude::config.cache', 1440);
+		$expires = config('components.Aptitude.config.cache', 1440);
 		if (app('cache')->has(static::APTITUDE_CACHE_KEY)) {
 			return app('cache')->get(static::APTITUDE_CACHE_KEY);
 		}
@@ -63,7 +63,7 @@ class Aptitude extends Component implements Cacheable
 				$count = (int)$matches[1];
 
 				// return if all we wanted was package count
-				if (!config('Aptitude::config.packages', true)) {
+				if (!config('components.Aptitude.config.packages', true)) {
 					return [
 						'count' => $count
 					];

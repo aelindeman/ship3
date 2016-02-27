@@ -7,8 +7,12 @@ return [
 		'loadpct' => 'Charge',
 		'bcharge' => 'Batterie',
 		'timeleft' => 'Temps jusqu’à vide',
-		
+
 		'lastxfer' => 'Transfert précédent',
 		'no-lastxfer' => 'jamais'
+	],
+
+	'errors' => [
+		'shell-failed' => 'échoué - :reason'
 	]
 ];

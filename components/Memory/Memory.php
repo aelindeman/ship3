@@ -2,6 +2,7 @@
 
 namespace App\Components;
 use App\Behaviors\Graphable;
+use App\Behaviors\Traits\DefaultGraphableAbsolute;
 use App\Models\Component;
 
 use DateInterval;
@@ -15,6 +16,8 @@ class Memory extends Component implements Graphable
 		'cached',
 		'total'
 	];
+
+	protected $graphable = ['used'];
 
 	public static function fetch()
 	{
@@ -50,25 +53,5 @@ class Memory extends Component implements Graphable
 		];
 	}
 
-	public function series(DateInterval $period = null)
-	{
-		$since = $period ?
-			app('carbon')->now()->sub($period) :
-			app('carbon')->now()->subHours(config('app.graph-width'));
-
-		$query = app('db')->table($this->table)
-			->where('time', '>=', $since)
-			->orderBy('time', 'asc');
-
-		$data = collect($query->get());
-
-		$used = $data->map(function($entry, $index) {
-			return [
-				'x' => app('carbon')->parse($entry->time)->timestamp,
-				'y' => $entry->used,
-			];
-		});
-
-		return [$used];
-	}
+	use DefaultGraphableAbsolute;
 }

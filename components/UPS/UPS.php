@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Components;
+use App\Behaviors\Graphable;
+use App\Behaviors\Traits\DefaultGraphableAbsolute;
 use App\Helpers\ExecutableHelper;
 use App\Models\Component;
 
@@ -8,7 +10,7 @@ use AdamBrett\ShellWrapper\Command\Builder;
 use AdamBrett\ShellWrapper\Runners\Exec;
 use AdamBrett\ShellWrapper\ExitCodes;
 
-class UPS extends Component
+class UPS extends Component implements Graphable
 {
 	protected $table = 'ups';
 	protected $fillable = [
@@ -17,6 +19,13 @@ class UPS extends Component
 		'loadpct',
 		'battv',
 		'linev'
+	];
+
+	protected $graphable = [
+		'loadpct',
+		'bcharge',
+		'linev',
+		'battv'
 	];
 
 	public static function fetch()
@@ -41,7 +50,11 @@ class UPS extends Component
 		if (($exit = $shell->getReturnValue()) == ExitCodes::SUCCESS) {
 			return $shell->getOutput();
 		} else {
-			throw new \RuntimeException(ExitCodes::getDescription($exit));
+			app('log')->info(
+				app('translator')->get('UPS::component.errors.shell-failed', [
+					':reason' => ExitCodes::getDescription($exit)
+				])
+			);
 		}
 	}
 
@@ -70,4 +83,6 @@ class UPS extends Component
 		}
 		return $out;
 	}
+
+	use DefaultGraphableAbsolute;
 }

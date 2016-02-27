@@ -11,4 +11,8 @@ return [
 	'local' => 'Local',
 	'remote' => 'Distante',
 
+	'errors' => [
+		'get-address' => 'incapable d’obtenir l’adresse :type'
+	]
+
 ];

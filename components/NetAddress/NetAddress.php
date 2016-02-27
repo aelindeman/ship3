@@ -20,11 +20,11 @@ class NetAddress extends Component implements Cacheable
 
 	public static function fetch()
 	{
-		$expires = config('NetAddress::config.cache', 1440);
+		$expires = config('components.NetAddress.config.cache', 1440);
 		$ipv4 = null; $ipv6 = null;
 
 		// get IPv4 address
-		if (config('NetAddress::config.ipv4', true)) {
+		if (config('components.NetAddress.config.ipv4', true)) {
 			try {
 				if (app('cache')->has(static::IPv4_CACHE_KEY)) {
 					// use cache if it's there
@@ -42,7 +42,7 @@ class NetAddress extends Component implements Cacheable
 		}
 
 		// get IPv6 address
-		if (config('NetAddress::config.ipv6', true)) {
+		if (config('components.NetAddress.config.ipv6', true)) {
 			try {
 				if (app('cache')->has(static::IPv6_CACHE_KEY)) {
 					// use cache if it's there

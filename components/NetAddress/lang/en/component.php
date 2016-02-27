@@ -9,6 +9,10 @@ return [
 
 	'browser' => 'Yours',
 	'local' => 'Local',
-	'remote' => 'Remote'
+	'remote' => 'Remote',
+
+	'errors' => [
+		'get-address' => 'could not get :type address'
+	]
 
 ];

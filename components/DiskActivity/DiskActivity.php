@@ -3,6 +3,8 @@
 namespace App\Components;
 use App\Behaviors\Differentiable;
 use App\Behaviors\Graphable;
+use App\Behaviors\Traits\DefaultGraphableDerivative;
+use App\Behaviors\Traits\DefaultDifferentiable;
 use App\Models\Component;
 
 use DateInterval;
@@ -89,68 +91,6 @@ class DiskActivity extends Component implements Differentiable, Graphable
 		];
 	}
 
-	public function series(DateInterval $period = null)
-	{
-		$since = $period ?
-			app('carbon')->now()->sub($period) :
-			app('carbon')->now()
-				->sub(new DateInterval('PT'.config('ship.graph-width')));
-
-		$query = app('db')->table($this->table)
-			->where('time', '>=', $since)
-			->orderBy('time', 'asc');
-
-		$data = collect($query->get());
-
-		$read = $data->map(function($entry, $index) use ($data) {
-			if ($previous = $data->get($index - 1)) {
-				$r = ($entry->read - $previous->read) / 60;
-				return [
-					'x' => app('carbon')->parse($entry->time)->timestamp,
-					'y' => max($r, 0),
-				];
-			}
-			return null;
-		});
-
-		$write = $data->map(function($entry, $index) use ($data) {
-			if ($previous = $data->get($index - 1)) {
-				$w = ($entry->write - $previous->write) / 60;
-				return [
-					'x' => app('carbon')->parse($entry->time)->timestamp,
-					'y' => max($w, 0),
-				];
-			}
-			return null;
-		});
-
-		return [$read, $write];
-	}
-
-	public function difference(DateInterval $period, DateTime $from = null)
-	{
-		$start = $from ?
-			app('carbon')->parse($from) :
-			app('carbon')->now();
-
-		$end = $start->copy()->sub($period);
-
-		$a = app('db')->table($this->table)
-			->where('time', '<=', $start)
-			->orderBy('time', 'desc')
-			->first();
-
-		$b = app('db')->table($this->table)
-			->where('time', '<', $end)
-			->orderBy('time', 'desc')
-			->first();
-
-		$values = array_map(function($key) use ($a, $b) {
-			return $b ?
-				$a->$key - $b->$key :
-				$a->$key;
-		}, $this->fillable);
-
-		return array_combine($this->fillable, $values);
-	}
+	use DefaultDifferentiable;
+	use DefaultGraphableDerivative;
 }
