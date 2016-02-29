@@ -13,6 +13,6 @@ return [
 	],
 
 	'errors' => [
-		'shell-failed' => 'failed - :reason'
+		'shell-failed' => ':component - failed to run executable - :reason'
 	]
 ];

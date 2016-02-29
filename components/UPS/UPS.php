@@ -30,19 +30,18 @@ class UPS extends Component implements Graphable
 
 	public static function fetch()
 	{
-		// use specified path to apcaccess, or caluclate it from path
-		$bin = ExecutableHelper::getExecutablePath(
-			config('components.UPS.executable', 'apcaccess')
+		$command = config('components.UPS.executable', 'apcaccess');
+		$bin = ExecutableHelper::getExecutablePath($command,
+			ExecutableHelper::STRATEGY_ALL | ExecutableHelper::STRATEGY_POSIX_USUAL_PATHS
 		);
+
+		if (!$bin) {
+			throw new \RuntimeException('Command not found ('.$command.')');
+		}
 
 		$shell = new Exec();
 		$command = new Builder($bin);
 		$command->addFlag('u'); // strip unit labels
-
-		// specify host, if it's in the config
-		if ($host = config('components.UPS.host')) {
-			$command->addFlag('h', $host);
-		}
 
 		$shell->run($command);
 
@@ -50,11 +49,7 @@ class UPS extends Component implements Graphable
 		if (($exit = $shell->getReturnValue()) == ExitCodes::SUCCESS) {
 			return $shell->getOutput();
 		} else {
-			app('log')->info(
-				app('translator')->get('UPS::component.errors.shell-failed', [
-					':reason' => ExitCodes::getDescription($exit)
-				])
-			);
+			throw new \RuntimeException(ExitCodes::getDescription($exit));
 		}
 	}
 

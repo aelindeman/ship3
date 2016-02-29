@@ -17,15 +17,15 @@ class ExecutableHelper
 	const STRATEGY_ALL = 0b011;
 
 	/*
-	 * Optional setting for using the default POSIX paths, instead of the ones
+	 * Optional setting for using common POSIX paths, instead of the ones
 	 *   in use by the system.
 	 */
-	const STRATEGY_USE_POSIX_PATHS = 0b100;
+	const STRATEGY_POSIX_USUAL_PATHS = 0b100;
 
 	/*
-	 * List of paths where binaries are usually installed.
+	 * List of paths where binaries are commonly installed.
 	 */
-	const POSIX_DEFAULT_PATHS = [
+	const POSIX_USUAL_PATHS = [
 		'/bin',
 		'/sbin',
 		'/usr/bin',
@@ -52,16 +52,16 @@ class ExecutableHelper
 		// get paths from parameter, our list of defaults, or system $PATH
 		$paths = is_array($paths) ?
 			$paths :
-			($settings & self::STRATEGY_USE_POSIX_PATHS) ?
-				self::POSIX_DEFAULT_PATHS :
+			($settings & self::STRATEGY_POSIX_USUAL_PATHS) ?
+				self::POSIX_USUAL_PATHS :
 				explode(PATH_SEPARATOR, getenv('PATH'));
 
 		// use `which` to find the binary
 		if ($settings & self::STRATEGY_WHICH) {
 
 			// reset the path if specified
-			if ($settings & self::STRATEGY_USE_POSIX_PATHS) {
-				putenv('PATH='.implode(PATH_SEPARATOR, self::POSIX_DEFAULT_PATHS));
+			if ($settings & self::STRATEGY_POSIX_USUAL_PATHS) {
+				putenv('PATH='.implode(PATH_SEPARATOR, self::POSIX_USUAL_PATHS));
 			}
 
 			$shell = new Exec();

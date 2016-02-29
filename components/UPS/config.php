@@ -17,7 +17,7 @@ return [
 	 *   autodetect from $PATH, but if it doesn't work, you need to
 	 *   specify it manually.
 	 */
-	'bin' => env('COMPONENT_UPS_BIN'),
+	'executable' => env('COMPONENT_UPS_EXECUTABLE', 'apcaccess'),
 
 	/*
 	 * Host to fetch data from. If unset, it will default to localhost. The

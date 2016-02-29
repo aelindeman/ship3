@@ -15,10 +15,12 @@ class Processes extends Component
 
 	public static function fetch()
 	{
-		// use specified path to apcaccess, or caluclate it from path
-		$bin = ExecutableHelper::getExecutablePath(
-			config('components.Processes.executable', 'ps')
-		);
+		$command = config('components.Processes.executable', 'ps');
+		$bin = ExecutableHelper::getExecutablePath($command);
+
+		if (!$bin) {
+			throw new \RuntimeException('Command not found ('.$command.')');
+		}
 
 		$shell = new Exec();
 		$command = new Builder($bin);

@@ -13,6 +13,6 @@ return [
 	],
 
 	'errors' => [
-		'shell-failed' => 'échoué - :reason'
+		'shell-failed' => ':component - l’exécution de l’exécutable a échoué - :reason'
 	]
 ];
