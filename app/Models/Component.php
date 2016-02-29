@@ -59,12 +59,11 @@ abstract class Component extends Model implements Fetchable, Parseable
 	public function run($filter = false)
 	{
 		if (!$this->output) {
-			$this->output = static::parse(static::fetch());
-		}
-
-		$name = $this->getShortName();
-		if (($order = config('components.'.$name.'.order', false)) !== false) {
-			$this->output['order'] = $order;
+			if ($fetch = static::fetch()) {
+				$this->output = static::parse($fetch);
+			} else {
+				return null;
+			}
 		}
 
 		// return only columns with database fields, if requested
