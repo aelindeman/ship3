@@ -159,8 +159,13 @@ class ComponentController extends Controller
 		$data = $this->components->filter(function($component) {
 			return $component instanceOf Graphable;
 		})->map(function($component) use ($period) {
-			$component->run();
-			return $component->series($period);
+			$out = $component->run();
+			try {
+				$out = $component->series($period);
+			} catch (\Exception $e) {
+				app('log')->notice($component.' - '.$e->getMessage());
+			}
+			return $out;
 		});
 
 		if ($data->isEmpty()) {
@@ -189,8 +194,13 @@ class ComponentController extends Controller
 		$data = $this->components->filter(function($component) {
 			return $component instanceOf Differentiable;
 		})->map(function($component) use ($period, $from) {
-			$component->run();
-			return $component->difference($period, $from);
+			$out = $component->run();
+			try {
+				$out = $component->difference($period, $from);
+			} catch (\Exception $e) {
+				app('log')->notice($component.' - '.$e->getMessage());
+			}
+			return $out;
 		});
 
 		if ($data->isEmpty()) {
