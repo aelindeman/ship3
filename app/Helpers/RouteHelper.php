@@ -38,8 +38,14 @@ class RouteHelper
 			$cc = app(ComponentController::class)->run($component);
 			static::handleFlushCacheRequest($cc, $component);
 
-			$data = $cc->getProcessedData($this->diffPeriod, $this->diffFrom)
-				->sortBy('order');
+			// there's a specific route for single-component differential data,
+			// so don't do that here if we're getting data for one component
+			if ($component) {
+				$data = $cc->getRawData();
+			} else {
+				$data = $cc->getProcessedData($this->diffPeriod, $this->diffFrom)
+					->sortBy('order');
+			}
 
 			if ($component) {
 				$data = $data->get($component);
