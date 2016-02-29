@@ -3,16 +3,34 @@
 namespace App\Helpers;
 use App\Controllers\ComponentController;
 
+use Carbon\Carbon;
 use DateInterval;
 
 class RouteHelper
 {
+	protected $callback  = false;
+	protected $diffPeriod;
+	protected $diffFrom;
+
+	public function __construct()
+	{
+		$this->callback = app('request')->input('callback', null);
+
+		$this->diffPeriod = new DateInterval(
+			app('request')->input('period', config('ship.period'))
+		);
+
+		$this->diffFrom = app('request')->input('from') ?
+			Carbon::parse(app('request')->input('from')) :
+			Carbon::now();
+	}
+
 	/**
 	 * Retrieves component data and renders it as JSON.
 	 * @param $component string Retrieve data for a single component
 	 * @return Response
 	 */
-	public static function generateJSON($component = null)
+	public function generateJSON($component = null)
 	{
 		$response = response();
 
@@ -20,14 +38,14 @@ class RouteHelper
 			$cc = app(ComponentController::class)->run($component);
 			static::handleFlushCacheRequest($cc, $component);
 
-			$data = $cc->getData()->sortBy('order');
+			$data = $cc->getProcessedData($this->diffPeriod, $this->diffFrom)
+				->sortBy('order');
 
 			if ($component) {
 				$data = $data->get($component);
 			}
 
-			$response = $response->json($data)
-				->setCallback(app('request')->input('callback', null));
+			$response = $response->json($data)->setCallback($this->callback);
 
 		} catch (\Exception $e) {
 			$response = $response->json(['error' => $e->getMessage()], 400);
@@ -41,7 +59,7 @@ class RouteHelper
 	 * @param $component string Generate data for a single component
 	 * @return Response
 	 */
-	public static function generateDifferenceJSON($component = null)
+	public function generateDifferenceJSON($component = null)
 	{
 		$response = response();
 
@@ -49,22 +67,13 @@ class RouteHelper
 			$cc = app(ComponentController::class)->run($component);
 			static::handleFlushCacheRequest($cc, $component);
 
-			$period = new DateInterval(
-				app('request')->input('period', 'PT'.config('ship.graph-width'))
-			);
-
-			$from = app('request')->input('from') ?
-				app('carbon')->parse(app('request')->input('from')) :
-				app('carbon')->now();
-
-			$data = $cc->getDifferenceData($period, $from);
+			$data = $cc->getDifferenceData($this->diffPeriod, $this->diffFrom);
 
 			if ($component) {
 				$data = $data->get($component);
 			}
 
-			$response = $response->json($data)
-				->setCallback(app('request')->input('callback', null));
+			$response = $response->json($data)->setCallback($this->callback);
 
 		} catch (\Exception $e) {
 			$response = $response->json(['error' => $e->getMessage()], 400);
@@ -78,7 +87,7 @@ class RouteHelper
 	 * @param $component string Generate data for a single component
 	 * @return Response
 	 */
-	public static function generateGraphJSON($component = null)
+	public function generateGraphJSON($component = null)
 	{
 		$response = response();
 
@@ -86,18 +95,13 @@ class RouteHelper
 			$cc = app(ComponentController::class)->run($component);
 			static::handleFlushCacheRequest($cc, $component);
 
-			$period = new DateInterval(
-				app('request')->input('period', 'PT'.config('ship.graph-width'))
-			);
-
-			$data = $cc->getGraphData($period);
+			$data = $cc->getGraphData($this->diffPeriod);
 
 			if ($component) {
 				$data = $data->get($component);
 			}
 
-			$response = $response->json($data)
-				->setCallback(app('request')->input('callback', null));
+			$response = $response->json($data)->setCallback($this->callback);
 
 		} catch (\Exception $e) {
 			$response = $response->json(['error' => $e->getMessage()], 400);
@@ -110,15 +114,16 @@ class RouteHelper
 	 * Generates the 'overview' page, displaying all components.
 	 * @return Response
 	 */
-	public static function overviewPage()
+	public function overviewPage()
 	{
 		$cc = app(ComponentController::class)->run();
 		static::handleFlushCacheRequest($cc);
 
-		$cc->dateInterval = 'PT'.config('ship.graph-width');
+		$data = $cc->getProcessedData($this->diffPeriod, $this->diffFrom)	
+			->sortBy('order');
 
 		return view('home', [
-			'components' => $cc->getData()
+			'components' => $data
 		]);
 	}
 
@@ -129,7 +134,7 @@ class RouteHelper
 	 *   default.
 	 * @return Response ShipJS.init JSONP callback
 	 */
-	public static function initJS()
+	public function initJS()
 	{
 		try {
 			$registered = app(ComponentController::class)->registerComponents();

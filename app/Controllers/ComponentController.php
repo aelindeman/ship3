@@ -52,8 +52,7 @@ class ComponentController extends Controller
 		$this->components = collect();
 		$this->registered = collect();
 
-		$this->dateInterval = app('request')->input('period',
-			'PT'.config('ship.graph-width'));
+		$this->dateInterval = app('request')->input('period', config('ship.period'));
 	}
 
 	/**
@@ -101,26 +100,48 @@ class ComponentController extends Controller
 		return $this;
 	}
 
-	/*
-	 * Flushes component caches and returns a new ComponentController instane.
+	/**
+	 * Returns a collection of the raw output of all active components.
+	 * @return Collection
 	 */
-	public function flush()
+	public function getRawData()
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
 			throw new \RuntimeException('No components registed');
 		}
 
-		$this->components->filter(function($component) {
-			return $component instanceOf Cacheable;
-		})->each(function($component) {
-			$component::flush();
+		// get data for each component
+		return $this->components->map(function($component) {
+			return $component->run();
 		});
+	}
 
-		// reset components to force data reload
-		$this->components = collect();
-		$this->registered = collect();
+	/**
+	 * Returns a collection of the output of all active components.
+	 * @param $period DateInterval Time period for which to calculate the data
+	 *   differential, relative to either the current time or $from, if
+	 *   specified.
+	 * @param $from DateTime Time from which to calculate the differential.
+	 *   Defaults to the current time if unspecified.
+	 * @return Collection
+	 */
+	public function getProcessedData(DateInterval $period, DateTime $from = null)
+	{
+		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
+			throw new \RuntimeException('No components registed');
+		}
 
-		return $this;
+		$raw = $this->getRawData();
+		$differential = $this->getDifferenceData($period, $from);
+		$data = $raw->merge($differential);
+
+		$order = $this->getComponentOrder();
+
+		return $data->map(function($data, $component) use ($order) {
+			return (isset($order[$component])) ?
+				array_merge($data, ['order' => $order[$component]]) :
+				$data;
+		});
 	}
 
 	/**
@@ -150,12 +171,14 @@ class ComponentController extends Controller
 	}
 
 	/**
-	 * Calculate the difference between two data points.
+	 * Returns the output of components that provide differential data. Does
+	 *   not include regular components' data - use getProcessedData().
 	 * @param $period DateInterval Time period for which to calculate the data
 	 *   differential, relative to either the current time or $from, if
 	 *   specified.
 	 * @param $from DateTime Time from which to calculate the differential.
 	 *   Defaults to the current time if unspecified.
+	 * @return Collection
 	 */
 	public function getDifferenceData(DateInterval $period, DateTime $from = null)
 	{
@@ -177,30 +200,26 @@ class ComponentController extends Controller
 		return $data;
 	}
 
-	/**
-	 * Returns a collection of the output of all active components.
-	 * @return Collection output
+	/*
+	 * Flushes component caches and returns a new ComponentController instane.
 	 */
-	public function getData()
+	public function flush()
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
 			throw new \RuntimeException('No components registed');
 		}
 
-		// get data for each component
-		$data = $this->components->map(function($component) {
-			$d = $component->run();
-
-			if ($component instanceOf Differentiable) {
-				$d = array_merge($d, $component->difference(
-					new DateInterval($this->dateInterval)
-				));
-			}
-
-			return $d;
+		$this->components->filter(function($component) {
+			return $component instanceOf Cacheable;
+		})->each(function($component) {
+			$component::flush();
 		});
 
-		return $data;
+		// reset components to force data reload
+		$this->components = collect();
+		$this->registered = collect();
+
+		return $this;
 	}
 
 	/**
@@ -368,5 +387,23 @@ class ComponentController extends Controller
 
 		$pieces = explode('\\', $component);
 		return array_pop($pieces);
+	}
+
+	/**
+	 * Returns the order in which components should appear.
+	 * @param $component string Fetch order of a single component
+	 * @return array component name => order number
+	 */
+	public function getComponentOrder($component = null)
+	{
+		$order = array_map(function($config) {
+			return isset($config['order']) ?
+				$config['order'] :
+				null;
+		}, config('components'));
+
+		return $component ?
+			$order[$component] :
+			$order;
 	}
 }

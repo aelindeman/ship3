@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Controllers\ComponentController;
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 

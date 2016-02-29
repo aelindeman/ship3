@@ -329,7 +329,7 @@
 		context.drawCallbacks.drawComponents = false;
 
 		xhr.open('GET', this.createQueryString('/json', {
-			period: 'PT' + this.timePeriod
+			period: this.timePeriod
 		}));
 
 		xhr.addEventListener('readystatechange', function(event) {
@@ -354,7 +354,7 @@
 		context.drawCallbacks.drawGraphs = false;
 
 		xhr.open('GET', this.createQueryString('/json/graph', {
-			period: 'PT' + this.timePeriod
+			period: this.timePeriod
 		}));
 
 		xhr.addEventListener('readystatechange', function(event) {

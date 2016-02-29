@@ -14,8 +14,7 @@
 return [
 
 	/*
-	 * Change the title of Ship here. It is this machine's
-	 *   hostname by default.
+	 * Change the title of Ship here. It is this machine's hostname by default.
 	 */
 	'title' => env('SHIP_TITLE', gethostname()),
 
@@ -25,9 +24,10 @@ return [
 	'dark-mode' => env('SHIP_DARK_MODE', false),
 
 	/*
-	 * How many hours' worth of data should graphs show by default?
+	 * How much data should graphs show by default?
+	 * The syntax of this setting follows PHP's DateInterval syntax.
 	 */
-	'graph-width' => env('SHIP_GRAPH_WIDTH', '3H'),
+	'period' => env('SHIP_PERIOD', 'PT3H'),
 
 	/*
 	 * Should components automatically refresh their data?

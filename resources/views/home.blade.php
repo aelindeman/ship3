@@ -18,10 +18,10 @@
 					<label class="label-before" for="time-period">@lang('ship.header.toolbar.time-period')</label>
 					<select id="time-period" class="input">
 @foreach ([15, 30, 60] as $m)
-						<option value="{{ $m }}M"{{ config('ship.graph-width') == $m.'M' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $m, 'units' => app('translator')->choice('ship.time.minute', $m)])</option>
+						<option value="PT{{ $m }}M"{{ config('ship.period') == 'PT'.$m.'M' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $m, 'units' => app('translator')->choice('ship.time.minute', $m)])</option>
 @endforeach
 @foreach ([2, 3, 6, 12, 24] as $h)
-						<option value="{{ $h }}H"{{ config('ship.graph-width') == $h.'H' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $h, 'units' => app('translator')->choice('ship.time.hour', $h)])</option>
+						<option value="PT{{ $h }}H"{{ config('ship.period') == 'PT'.$h.'H' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $h, 'units' => app('translator')->choice('ship.time.hour', $h)])</option>
 @endforeach
 					</select>
 				</div>
@@ -61,12 +61,12 @@
 <meta name="format-detection" content="telephone=no">
 @endsection
 
+@section ('styles')
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist.min.css">
+@endsection
+
 @section ('scripts')
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist.min.js"></script>
 <script type="text/javascript" src="{{ url('ship.min.js') }}"></script>
 <script type="text/javascript" src="{{ url('init') }}"></script>
-@endsection
-
-@section ('styles')
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist.min.css">
 @endsection

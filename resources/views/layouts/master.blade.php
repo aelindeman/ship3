@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="@yield('theme', config('ship.dark-mode') ? 'dark' : 'light')-mode no-js" lang="{{ config('ship.locale', 'en') }}" data-autoreload="{{ config('ship.autoreload') ? 'on' : 'off' }}" data-env="{{ app()->environment() }}">
+<html class="@yield('theme', config('ship.dark-mode') ? 'dark' : 'light')-mode no-js" lang="{{ config('app.locale', 'en') }}" data-autoreload="{{ config('ship.autoreload') ? 'on' : 'off' }}" data-env="{{ app()->environment() }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">

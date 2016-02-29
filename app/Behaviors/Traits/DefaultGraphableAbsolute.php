@@ -11,7 +11,7 @@ trait DefaultGraphableAbsolute
 		$since = $period ?
 			app('carbon')->now()->sub($period) :
 			app('carbon')->now()
-				->sub(new DateInterval('PT'.config('ship.graph-width')));
+				->sub(new DateInterval(config('ship.period')));
 
 		$query = app('db')->table($this->table)
 			->where('time', '>=', $since)
