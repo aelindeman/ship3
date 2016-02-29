@@ -52,16 +52,16 @@ class ExecutableHelper
 		// get paths from parameter, our list of defaults, or system $PATH
 		$paths = is_array($paths) ?
 			$paths :
-			self::STRATEGY_USE_POSIX_PATHS ?
+			($settings & self::STRATEGY_USE_POSIX_PATHS) ?
 				self::POSIX_DEFAULT_PATHS :
-				explode(':', getenv('PATH'));
+				explode(PATH_SEPARATOR, getenv('PATH'));
 
 		// use `which` to find the binary
 		if ($settings & self::STRATEGY_WHICH) {
 
 			// reset the path if specified
 			if ($settings & self::STRATEGY_USE_POSIX_PATHS) {
-				putenv('PATH='.implode(':', self::POSIX_DEFAULT_PATHS));
+				putenv('PATH='.implode(PATH_SEPARATOR, self::POSIX_DEFAULT_PATHS));
 			}
 
 			$shell = new Exec();
