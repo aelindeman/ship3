@@ -25,14 +25,7 @@ class ExecutableHelper
 	/*
 	 * List of paths where binaries are commonly installed.
 	 */
-	const POSIX_USUAL_PATHS = [
-		'/bin',
-		'/sbin',
-		'/usr/bin',
-		'/usr/sbin',
-		'/usr/local/bin',
-		'/usr/local/sbin'
-	];
+	const POSIX_USUAL_PATHS = '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin';
 
 	/**
 	 * Allows components which require running commands from a shell to locate
@@ -53,7 +46,7 @@ class ExecutableHelper
 		$paths = is_array($paths) ?
 			$paths :
 			($settings & self::STRATEGY_POSIX_USUAL_PATHS) ?
-				self::POSIX_USUAL_PATHS :
+				explode(':', self::POSIX_USUAL_PATHS) :
 				explode(PATH_SEPARATOR, getenv('PATH'));
 
 		// use `which` to find the binary
@@ -61,7 +54,7 @@ class ExecutableHelper
 
 			// reset the path if specified
 			if ($settings & self::STRATEGY_POSIX_USUAL_PATHS) {
-				putenv('PATH='.implode(PATH_SEPARATOR, self::POSIX_USUAL_PATHS));
+				putenv('PATH='.implode(PATH_SEPARATOR, explode(':', self::POSIX_USUAL_PATHS)));
 			}
 
 			$shell = new Exec();
