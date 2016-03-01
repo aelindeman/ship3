@@ -125,11 +125,12 @@ class RouteHelper
 		$cc = app(ComponentController::class)->run();
 		static::handleFlushCacheRequest($cc);
 
-		$data = $cc->getProcessedData($this->diffPeriod, $this->diffFrom)	
+		$data = $cc->getProcessedData($this->diffPeriod, null)
 			->sortBy('order');
 
 		return view('home', [
-			'components' => $data
+			'components' => $data,
+			'diffPeriod' => $this->diffPeriod,
 		]);
 	}
 

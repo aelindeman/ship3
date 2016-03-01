@@ -153,6 +153,9 @@
 		if (els.timePeriod) {
 			els.timePeriod.addEventListener('change', function(event) {
 				context.timePeriod = els.timePeriod.value;
+				if (window.history.replaceState) {
+					window.history.replaceState(null, null, context.setQueryParam('period', els.timePeriod.value));
+				}
 				context.fetchGraphs();
 				context.fetchComponents();
 			});
@@ -228,6 +231,8 @@
 	{
 		var keys = document.querySelectorAll('[data-key]'),
 			k = keys.length,
+			raw = document.querySelectorAll('[data-raw-key]'),
+			r = raw.length,
 			meters = document.querySelectorAll('[data-meter-series-key]'),
 			m = meters.length;
 
@@ -249,6 +254,15 @@
 			}
 
 			el.innerHTML = value || '&mdash;';
+		}
+
+		// update raw
+		while (r --) {
+			var el = raw[r],
+				key = el.dataset.rawKey,
+				value = get(key);
+
+			el.dataset.raw = value;
 		}
 
 		// update meters
@@ -406,6 +420,27 @@
 	{
 		els.loadingIndicator.innerHTML = text || this.lang.ship.loading;
 		els.loadingIndicator.className = status ? 'status-' + status : 'status-0';
+	};
+
+	/*
+	 * Sets or modifies a URL query parameter.
+	 */
+	ShipJS.prototype.setQueryParam = function(name, value, url)
+	{
+		url = url || window.location.toString();
+		var re = new RegExp('([?&])' + name + '=.*(&|#|$)', 'i');
+
+		if (url.match(re)) {
+			return url.replace(re, '$1' + name + '=' + value + '$2');
+		} else {
+			var hash = '';
+			if (url.indexOf('#') !== -1) {
+				hash = url.replace(/.*#/, '#');
+				url = url.replace(/#.*/, '');
+			}
+			var separator = url.indexOf('?') !== -1 ? '&' : '?';
+			return url += separator + name + '=' + value + hash;
+		}
 	};
 
 	/*

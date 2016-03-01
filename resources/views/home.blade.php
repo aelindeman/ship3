@@ -1,6 +1,10 @@
 @extends ('layouts.master')
 @section ('title', config('ship.title', app('translator')->get('ship.app')))
 
+<?php
+$period = app('request')->get('period', config('ship.period', 'PT3H'));
+?>
+
 @section ('content')
 <header class="primary-header">
 	<h1>{{ config('ship.title', app('translator')->get('ship.app')) }}</h1>
@@ -18,10 +22,10 @@
 					<label class="label-before" for="time-period">@lang('ship.header.toolbar.time-period')</label>
 					<select id="time-period" class="input">
 @foreach ([15, 30, 60] as $m)
-						<option value="PT{{ $m }}M"{{ config('ship.period') == 'PT'.$m.'M' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $m, 'units' => app('translator')->choice('ship.time.minute', $m)])</option>
+						<option value="PT{{ $m }}M"{{ $period == 'PT'.$m.'M' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $m, 'units' => app('translator')->choice('ship.time.minute', $m)])</option>
 @endforeach
 @foreach ([2, 3, 6, 12, 24] as $h)
-						<option value="PT{{ $h }}H"{{ config('ship.period') == 'PT'.$h.'H' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $h, 'units' => app('translator')->choice('ship.time.hour', $h)])</option>
+						<option value="PT{{ $h }}H"{{ $period == 'PT'.$h.'H' ? ' selected' : '' }}>@lang('ship.time.relative.previous', ['value' => $h, 'units' => app('translator')->choice('ship.time.hour', $h)])</option>
 @endforeach
 					</select>
 				</div>
