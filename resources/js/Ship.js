@@ -244,35 +244,34 @@
 
 		// update text
 		while (k --) {
-			var el = keys[k],
-				key = el.dataset.key,
-				value = get(key),
-				units;
+			var kel = keys[k],
+				kkey = kel.dataset.key,
+				kvalue = get(kkey);
 
-			if (units = el.dataset.units) {
-				value = this.valueTransform(units, value);
+			if (kel.dataset.units) {
+				kvalue = this.valueTransform(kel.dataset.units, kvalue);
 			}
 
-			el.innerHTML = value || '&mdash;';
+			kel.innerHTML = kvalue || '&mdash;';
 		}
 
 		// update raw
 		while (r --) {
-			var el = raw[r],
-				key = el.dataset.rawKey,
-				value = get(key);
+			var rel = raw[r],
+				rkey = rel.dataset.rawKey,
+				rvalue = get(rkey);
 
-			el.dataset.raw = value;
+			rel.dataset.raw = rvalue;
 		}
 
 		// update meters
 		while (m --) {
-			var el = meters[m],
-				key = el.dataset.meterSeriesKey,
-				value = get(key);
+			var mel = meters[m],
+				mkey = mel.dataset.meterSeriesKey,
+				mvalue = get(mkey);
 
-			value = this.valueTransform('percent', value);
-			el.style.width = value;
+			mvalue = this.valueTransform('percent', mvalue);
+			mel.style.width = mvalue;
 		}
 
 		onComplete('drawComponents', this);
@@ -396,6 +395,7 @@
 				'@d': Math.floor(uptime / 86400),
 				'@M': Math.round(uptime / 60),
 				'@H': (uptime / 3600).toFixed(1),
+				'@G': Math.floor(uptime / 60),
 				'@D': (uptime / 86400).toFixed(2),
 				'_m': context.tr('ship.time.minute').substring(0, 1),
 				'_h': context.tr('ship.time.hour').substring(0, 1),

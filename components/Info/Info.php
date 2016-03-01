@@ -23,10 +23,13 @@ class Info extends Component
 		list($up, $idle) = preg_split('/\s+/', $input['uptime'], 2);
 
 		// partial times
-		$secs = str_pad((int)($up % 60), 2, '0', STR_PAD_LEFT);
-		$mins = str_pad((int)($up / 60 % 60), 2, '0', STR_PAD_LEFT);
-		$hours = (int)($up / 3600 % 24);
-		$days = (int)($up / 86400);
+		$secs = str_pad(floor($up % 60), 2, '0', STR_PAD_LEFT);
+		$mins = str_pad(floor($up / 60 % 60), 2, '0', STR_PAD_LEFT);
+		$hours = floor($up / 3600 % 24);
+		$days = floor($up / 86400);
+
+		// sorta-partial times
+		$hoursMaxPart = floor($up / 60);
 
 		// total times
 		$totalMins = (int)($up / 60);
@@ -41,6 +44,7 @@ class Info extends Component
 			'@d' => $days,
 			'@M' => $totalMins,
 			'@H' => $totalHours,
+			'@G' => $hoursMaxPart,
 			'@D' => $totalDays,
 			'_m' => substr(app('translator')->choice('ship.time.minute', $mins), 0, 1),
 			'_h' => substr(app('translator')->choice('ship.time.hour', $hours), 0, 1),
@@ -50,7 +54,7 @@ class Info extends Component
 			'_D' => substr(app('translator')->choice('ship.time.day', $totalDays), 0, 1)
 		];
 
-		$format = config('components.Info.uptime.format', '@d_d @h:@m:@s');
+		$format = config('components.Info.uptime-format', '@d_d @h:@m:@s');
 		$formatted = strtr($format, $dict);
 
 		return array_merge($input, [
