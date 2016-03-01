@@ -427,18 +427,20 @@
 	 */
 	ShipJS.prototype.setQueryParam = function(name, value, url)
 	{
-		url = url || window.location.toString();
-		var re = new RegExp('([?&])' + name + '=.*(&|#|$)', 'i');
+		url = url || window.location.href;
+		var re = new RegExp('([?&])' + name + '=.*?(&|#|$)', 'i');
 
 		if (url.match(re)) {
 			return url.replace(re, '$1' + name + '=' + value + '$2');
 		} else {
-			var hash = '';
+			var separator = url.indexOf('?') !== -1 ? '&' : '?',
+				hash = '';
+
 			if (url.indexOf('#') !== -1) {
 				hash = url.replace(/.*#/, '#');
 				url = url.replace(/#.*/, '');
 			}
-			var separator = url.indexOf('?') !== -1 ? '&' : '?';
+			
 			return url += separator + name + '=' + value + hash;
 		}
 	};
@@ -453,6 +455,10 @@
 			els.html.className.replace(/light-mode/, 'dark-mode');
 
 		this.darkMode = !this.darkMode;
+
+		if (window.history.replaceState) {
+			window.history.replaceState(null, null, this.setQueryParam('dark', this.darkMode));
+		}
 	};
 
 	/*
@@ -466,6 +472,10 @@
 			this.bindSelfUpdate();
 		} else {
 			clearInterval(this.selfUpdate.callback);
+		}
+
+		if (window.history.replaceState) {
+			window.history.replaceState(null, null, this.setQueryParam('autoreload', this.autoreload));
 		}
 	};
 

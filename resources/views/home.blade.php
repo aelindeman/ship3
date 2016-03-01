@@ -1,9 +1,12 @@
 @extends ('layouts.master')
-@section ('title', config('ship.title', app('translator')->get('ship.app')))
 
 <?php
 $period = app('request')->get('period', config('ship.period', 'PT3H'));
+$darkmode = app('request')->get('dark', config('ship.dark-mode', false)) == 'true';
 ?>
+
+@section ('title', config('ship.title', app('translator')->get('ship.app')))
+@section ('theme', $darkmode ? 'dark' : 'light')
 
 @section ('content')
 <header class="primary-header">
@@ -30,7 +33,7 @@ $period = app('request')->get('period', config('ship.period', 'PT3H'));
 					</select>
 				</div>
 			</li><li>
-				<button id="theme-toggle" data-labels="@lang('ship.header.toolbar.dark-mode.enable')|@lang('ship.header.toolbar.dark-mode.disable')">@lang('ship.header.toolbar.dark-mode.'.(config('ship.dark-mode') ? 'disable' : 'enable'))</button>
+				<button id="theme-toggle" data-labels="@lang('ship.header.toolbar.dark-mode.enable')|@lang('ship.header.toolbar.dark-mode.disable')">@lang('ship.header.toolbar.dark-mode.'.($darkmode ? 'disable' : 'enable'))</button>
 			</li>
 		</ul>
 	</nav>
