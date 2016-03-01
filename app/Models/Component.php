@@ -33,15 +33,6 @@ abstract class Component extends Model implements Fetchable, Parseable
 	}
 
 	/*
-	 * Default constructor tries to run the component.
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->run();
-	}
-
-	/*
 	 * Returns the short name (class name without namespace) of the component.
 	 */
 	public function getShortName()
