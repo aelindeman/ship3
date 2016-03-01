@@ -75,7 +75,11 @@ class Aptitude extends Component implements Cacheable
 			// get package list
 			if (preg_match('/^Inst\s+(.*?)\s+\[(.*?)\]\s+\((.*?)\s+/i', $line, $matches)) {
 				list(, $name, $fromVersion, $toVersion) = $matches;
-				$packages[$name] = [$fromVersion, $toVersion];
+				array_push($packages, [
+					'name' => $name,
+					'from' => $fromVersion,
+					'to' => $toVersion
+				]);
 			}
 		}
 
