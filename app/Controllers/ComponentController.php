@@ -107,7 +107,7 @@ class ComponentController extends Controller
 	public function getRawData()
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
-			throw new \RuntimeException('No components registed');
+			throw new \RuntimeException('No components registered');
 		}
 
 		// get data for each component
@@ -128,7 +128,7 @@ class ComponentController extends Controller
 	public function getProcessedData(DateInterval $period, DateTime $from = null)
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
-			throw new \RuntimeException('No components registed');
+			throw new \RuntimeException('No components registered');
 		}
 
 		$raw = $this->getRawData();
@@ -138,7 +138,7 @@ class ComponentController extends Controller
 		$order = $this->getComponentOrder();
 
 		return $data->map(function($data, $component) use ($order) {
-			return (isset($order[$component])) ?
+			return (isset($data) and isset($order[$component])) ?
 				array_merge($data, ['order' => $order[$component]]) :
 				$data;
 		});
@@ -153,7 +153,7 @@ class ComponentController extends Controller
 	public function getGraphData(DateInterval $period = null)
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
-			throw new \RuntimeException('No components registed');
+			throw new \RuntimeException('No components registered');
 		}
 
 		$data = $this->components->filter(function($component) {
@@ -188,7 +188,7 @@ class ComponentController extends Controller
 	public function getDifferenceData(DateInterval $period, DateTime $from = null)
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
-			throw new \RuntimeException('No components registed');
+			throw new \RuntimeException('No components registered');
 		}
 
 		$data = $this->components->filter(function($component) {
@@ -216,7 +216,7 @@ class ComponentController extends Controller
 	public function flush()
 	{
 		if ($this->components->isEmpty() or $this->registered->isEmpty()) {
-			throw new \RuntimeException('No components registed');
+			throw new \RuntimeException('No components registered');
 		}
 
 		$this->components->filter(function($component) {
